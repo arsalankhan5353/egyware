@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <style>
   :root{
     --ink:#0F1218;
@@ -449,6 +450,20 @@
     background:radial-gradient(ellipse at 50% 38%, #1E2430 0%, #0A0C10 62%, #060708 100%);
     border-radius:12px;overflow:hidden;
   }
+  .model-scene.has-3d{cursor:default;}
+  .expand-btn{
+    position:absolute;top:10px;right:10px;z-index:2;
+    width:32px;height:32px;border-radius:8px;background:rgba(15,18,24,0.7);border:1px solid var(--steel-soft);
+    color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .expand-btn:hover{border-color:var(--text-mute);}
+  .expand-btn svg{width:16px;height:16px;}
+  model-viewer.real-3d{
+    width:100%;height:100%;
+    --poster-color:transparent;
+    background:transparent;
+  }
+  model-viewer.real-3d.lightbox-3d{height:100%;}
   .model-scene::before{
     content:"";position:absolute;inset:0;
     background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08), transparent 40%);
@@ -1242,6 +1257,22 @@
     document.body.style.overflow = 'hidden';
   }
 
+  function openLightbox3D(modelName){
+    const model = IPHONE_MODELS.find(m => m.name === modelName);
+    const models3d = getModel3D();
+    const src = models3d[modelName];
+    if(!model || !src) return;
+
+    const scene = document.getElementById('lightboxScene');
+    scene.innerHTML = `<model-viewer class="real-3d lightbox-3d" src="${src}" camera-controls auto-rotate
+      auto-rotate-delay="0" rotation-per-second="14deg" shadow-intensity="0.9" exposure="0.9"
+      interaction-prompt="none" touch-action="pan-y"></model-viewer>`;
+    document.getElementById('lightboxName').textContent = model.name;
+    document.getElementById('lightboxSpecs').textContent = `${model.display} · ${model.chip} · ${model.camera}`;
+    document.getElementById('photoLightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
   function closeLightbox(){
     document.getElementById('photoLightbox').classList.remove('open');
     document.body.style.overflow = '';
@@ -1296,6 +1327,10 @@
   function getModelPhotos(){
     try{ return JSON.parse(localStorage.getItem(PHOTOS_KEY)) || {}; }catch(e){ return {}; }
   }
+  const MODELS_3D_KEY = 'egyware_model_3d';
+  function getModel3D(){
+    try{ return JSON.parse(localStorage.getItem(MODELS_3D_KEY)) || {}; }catch(e){ return {}; }
+  }
 
   function renderModelCard(m, sizeKey){
     const sizes = { sm:{w:104,h:212,d:12}, md:{w:110,h:224,d:13}, lg:{w:120,h:246,d:14} };
@@ -1305,8 +1340,35 @@
     let lenses = "";
     for(let i=0;i<lensCount;i++){ lenses += '<div class="lens"></div>'; }
 
+    const models3d = getModel3D();
+    const model3d = models3d[m.name];
     const photos = getModelPhotos();
     const photo = photos[m.name];
+
+    if(model3d){
+      return `
+        <div class="model-card">
+          <div class="model-scene has-3d">
+            <model-viewer class="real-3d" src="${model3d}" camera-controls auto-rotate auto-rotate-delay="0"
+              rotation-per-second="18deg" shadow-intensity="0.9" exposure="0.9" interaction-prompt="none"
+              disable-zoom touch-action="pan-y"></model-viewer>
+            <button class="expand-btn" onclick="openLightbox3D('${m.name.replace(/'/g,"\\'")}')" aria-label="Enlarge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg>
+            </button>
+            <div class="spin-badge">Drag to rotate</div>
+          </div>
+          <h4>${m.name}</h4>
+          <div class="model-colors">${m.colors}</div>
+          <div class="model-specs">
+            <div class="spec-row"><span class="k">Display</span><span class="v">${m.display}</span></div>
+            <div class="spec-row"><span class="k">Chip</span><span class="v">${m.chip}</span></div>
+            <div class="spec-row"><span class="k">Camera</span><span class="v">${m.camera}</span></div>
+            <div class="spec-row"><span class="k">Storage</span><span class="v">${m.storage}</span></div>
+          </div>
+          <div class="repair-note">Screen · Battery · Camera repair available</div>
+        </div>`;
+    }
+
     const frontFace = photo
       ? `<div class="face front photo-face" style="background-image:url('${photo}')"></div>`
       : `<div class="face front"><div class="screen-glow">${topEl}</div></div>`;
