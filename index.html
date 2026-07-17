@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Egyware Trading LLC — Device Repair, Dubai</title>
+<meta name="description" content="Egyware Trading LLC — professional iPhone, Samsung, iPad & MacBook repair in Dubai. Same-day fixes, genuine parts, pick-up & delivery. Deira, Dubai.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1218;
+    --panel:#161B24;
+    --panel-2:#1D232F;
+    --steel:#2B3341;
+    --steel-soft:#232A36;
+    --signal:#4C8DFF;
+    --signal-dim:#2E4E8F;
+    --copper:#D98A4A;
+    --copper-soft:#3A2A1D;
+    --text:#EDEFF3;
+    --text-mute:#8C95A8;
+    --text-faint:#5C6577;
+    --ok:#4ADE9C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
+  ::selection{background:var(--signal);color:#fff;}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}
+  }
+
+  /* ---------- background circuit texture ---------- */
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.035;
+    background-image:radial-gradient(circle at 1px 1px, #fff 1px, transparent 0);
+    background-size:26px 26px;
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(15,18,24,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--steel-soft);
+  }
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 0;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;
+  }
+  .logo .brand-mark{flex-shrink:0;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4));}
+  .logo .dot{
+    width:9px;height:9px;border-radius:2px;background:var(--signal);
+    box-shadow:0 0 12px var(--signal);
+    animation:pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.35;}}
+  .logo span.sub{color:var(--text-mute);font-weight:400;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;margin-left:4px;}
+  .nav-links{display:flex;gap:32px;font-size:14px;color:var(--text-mute);}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    display:flex;align-items:center;gap:10px;
+    background:var(--signal);color:#fff;
+    padding:10px 18px;border-radius:6px;font-size:14px;font-weight:600;
+    transition:background 0.2s ease;
+  }
+  .nav-cta:hover{background:#3d78e6;}
+  .nav-toggle,.nav-links-mobile{display:none;}
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .nav-toggle{display:flex;}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:96px 0 80px;
+    border-bottom:1px solid var(--steel-soft);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";position:absolute;top:-200px;right:-160px;width:520px;height:520px;
+    background:radial-gradient(circle, rgba(76,141,255,0.16), transparent 68%);
+    pointer-events:none;
+  }
+  .hero-grid{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--signal);border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);
+    padding:6px 12px;border-radius:20px;margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(34px,5vw,56px);line-height:1.08;margin-bottom:20px;
+  }
+  .hero h1 em{
+    font-style:normal;color:var(--signal);
+  }
+  .hero p.lead{
+    color:var(--text-mute);font-size:17px;max-width:480px;margin-bottom:32px;
+  }
+  .btn-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:14px 24px;border-radius:6px;font-weight:600;font-size:15px;
+    transition:transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+  .btn-primary{background:var(--signal);color:#fff;}
+  .btn-primary:hover{background:#3d78e6;transform:translateY(-1px);}
+  .btn-ghost{border:1px solid var(--steel);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--text-mute);}
+  .trust-row{display:flex;gap:28px;flex-wrap:wrap;}
+  .trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-mute);}
+  .trust-item svg{width:16px;height:16px;color:var(--ok);flex-shrink:0;}
+
+  /* diagnostic device visual */
+  .device-scan{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--steel-soft);
+    border-radius:16px;
+    padding:36px;
+    display:flex;flex-direction:column;align-items:center;
+    overflow:hidden;
+  }
+  .device-scan .ticket-id{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);
+    margin-bottom:22px;letter-spacing:0.05em;
+  }
+  .phone-outline{
+    position:relative;width:150px;height:300px;
+    border:2.5px solid var(--steel);
+    border-radius:26px;
+    background:linear-gradient(180deg, #171C25, #12151C);
+    overflow:hidden;
+  }
+  .phone-outline::after{
+    content:"";position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:44px;height:5px;border-radius:3px;background:var(--steel);
+  }
+  .scan-line{
+    position:absolute;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, transparent, var(--signal), transparent);
+    box-shadow:0 0 14px var(--signal);
+    animation:scan 2.6s ease-in-out infinite;
+  }
+  @keyframes scan{
+    0%{top:6%;opacity:0;}
+    10%{opacity:1;}
+    50%{top:92%;opacity:1;}
+    60%{opacity:0;}
+    100%{top:6%;opacity:0;}
+  }
+  .scan-status{
+    margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--signal);
+    display:flex;align-items:center;gap:8px;
+  }
+  .scan-status .blink{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse-dot 1.4s ease-in-out infinite;}
+
+  @media (max-width:860px){
+    .hero-grid{grid-template-columns:1fr;}
+    .device-scan{max-width:320px;margin:0 auto;}
+  }
+
+  /* ---------- section shared ---------- */
+  section{padding:88px 0;}
+  .section-head{max-width:600px;margin-bottom:52px;}
+  .section-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--copper);margin-bottom:12px;
+  }
+  .section-head h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:14px;}
+  .section-head p{color:var(--text-mute);font-size:15.5px;}
+
+  /* ---------- services : ticket cards ---------- */
+  .services-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  }
+  .ticket{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--steel-soft);
+    border-radius:10px;
+    padding:26px 24px 22px;
+    transition:border-color 0.2s ease, transform 0.2s ease;
+  }
+  .ticket:hover{border-color:var(--signal-dim);transform:translateY(-3px);}
+  .ticket::before{
+    content:"";position:absolute;left:-9px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;border-radius:50%;background:var(--ink);border:1px solid var(--steel-soft);
+  }
+  .ticket::after{
+    content:"";position:absolute;right:-9px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;border-radius:50%;background:var(--ink);border:1px solid var(--steel-soft);
+  }
+  .ticket-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+  .ticket-icon{
+    width:42px;height:42px;border-radius:8px;background:var(--panel-2);
+    display:flex;align-items:center;justify-content:center;color:var(--signal);
+  }
+  .ticket-icon svg{width:22px;height:22px;}
+  .ticket-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);}
+  .ticket h3{font-size:18px;margin-bottom:10px;}
+  .ticket ul{list-style:none;}
+  .ticket li{
+    font-size:13.5px;color:var(--text-mute);padding:5px 0 5px 16px;position:relative;
+  }
+  .ticket li::before{
+    content:"";position:absolute;left:0;top:13px;width:6px;height:1.5px;background:var(--copper);
+  }
+
+  @media (max-width:900px){.services-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:580px){.services-grid{grid-template-columns:1fr;}}
+
+  /* ---------- process ---------- */
+  .process-strip{
+    background:var(--panel);border:1px solid var(--steel-soft);border-radius:14px;
+    padding:44px;
+  }
+  .process-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    position:relative;
+  }
+  .process-grid::before{
+    content:"";position:absolute;top:22px;left:8%;right:8%;height:1px;
+    background:repeating-linear-gradient(90deg, var(--steel) 0 8px, transparent 8px 16px);
+    z-index:0;
+  }
+  .process-step{position:relative;z-index:1;padding-right:16px;}
+  .process-step .num{
+    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);
+    width:44px;height:44px;border-radius:50%;background:var(--signal);
+    display:flex;align-items:center;justify-content:center;font-weight:600;margin-bottom:18px;
+  }
+  .process-step h4{font-size:16px;margin-bottom:8px;}
+  .process-step p{font-size:13.5px;color:var(--text-mute);}
+
+  @media (max-width:760px){
+    .process-grid{grid-template-columns:1fr 1fr;gap:32px 20px;}
+    .process-grid::before{display:none;}
+  }
+
+  /* ---------- why us ---------- */
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+  .why-list{display:flex;flex-direction:column;gap:24px;}
+  .why-item{display:flex;gap:16px;}
+  .why-item .mark{
+    flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--copper-soft);
+    color:var(--copper);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
+  }
+  .why-item h4{font-size:16px;margin-bottom:5px;}
+  .why-item p{font-size:14px;color:var(--text-mute);}
+  .brand-panel{
+    background:var(--panel);border:1px solid var(--steel-soft);border-radius:14px;padding:34px;
+  }
+  .brand-panel .section-tag{margin-bottom:8px;}
+  .brand-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .brand-pill{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-mute);
+    border:1px solid var(--steel);padding:8px 14px;border-radius:20px;
+  }
+
+  @media (max-width:860px){.why-grid{grid-template-columns:1fr;}}
+
+  /* ---------- locations ---------- */
+  .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+  .loc-grid-single{grid-template-columns:1fr;max-width:440px;}
+  .loc-card{
+    background:var(--panel);border:1px solid var(--steel-soft);border-radius:12px;padding:30px;
+  }
+  .loc-card .loc-tag{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--signal);
+    border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);padding:4px 10px;border-radius:14px;margin-bottom:16px;
+  }
+  .loc-card h3{font-size:19px;margin-bottom:10px;}
+  .loc-card address{font-style:normal;color:var(--text-mute);font-size:14.5px;line-height:1.7;margin-bottom:18px;}
+  .loc-card .loc-link{
+    display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--copper);font-weight:600;
+  }
+  .loc-card .loc-link svg{width:14px;height:14px;}
+
+  @media (max-width:760px){.loc-grid{grid-template-columns:1fr;}}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background:linear-gradient(135deg, var(--panel-2), var(--panel));
+    border-top:1px solid var(--steel-soft);border-bottom:1px solid var(--steel-soft);
+    padding:70px 0;text-align:center;
+  }
+  .cta-band h2{font-size:clamp(24px,3.6vw,36px);margin-bottom:14px;}
+  .cta-band p{color:var(--text-mute);margin-bottom:30px;font-size:15.5px;}
+  .cta-numbers{
+    display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
+    font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--text-mute);margin-top:26px;
+  }
+  .cta-numbers span{color:var(--text);}
+
+  /* ---------- FAQ ---------- */
+  /* ---------- track repair ---------- */
+  .track-box{background:var(--panel);border:1px solid var(--steel-soft);border-radius:14px;padding:30px;}
+  .track-input-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .track-input-row input{
+    flex:1;min-width:200px;background:var(--ink);border:1px solid var(--steel);border-radius:7px;
+    padding:12px 14px;color:var(--text);font-size:14px;font-family:'IBM Plex Mono',monospace;
+  }
+  .track-input-row input:focus{outline:none;border-color:var(--signal);}
+  .track-empty{margin-top:20px;color:var(--text-mute);font-size:13.5px;text-align:center;}
+  .track-result{margin-top:26px;padding-top:24px;border-top:1px solid var(--steel-soft);}
+  .track-result .tr-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+  .track-result .tr-head .tid{font-family:'IBM Plex Mono',monospace;color:var(--signal);font-size:15px;}
+  .track-result .tr-head .tdate{font-size:12px;color:var(--text-faint);}
+  .track-result .tr-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 20px;font-size:13.5px;margin-bottom:26px;}
+  .track-result .tr-meta .k{color:var(--text-faint);}
+  .status-track{display:flex;justify-content:space-between;position:relative;}
+  .status-track::before{
+    content:"";position:absolute;top:11px;left:5%;right:5%;height:2px;background:var(--steel-soft);
+  }
+  .status-track .st-node{flex:1;text-align:center;position:relative;z-index:1;}
+  .status-track .st-dot{
+    width:24px;height:24px;border-radius:50%;background:var(--panel-2);border:2px solid var(--steel);
+    margin:0 auto 8px;display:flex;align-items:center;justify-content:center;
+  }
+  .status-track .st-node.done .st-dot{background:var(--signal);border-color:var(--signal);}
+  .status-track .st-node.done .st-dot svg{width:12px;height:12px;color:#fff;}
+  .status-track .st-node.current .st-dot{border-color:var(--signal);box-shadow:0 0 0 4px rgba(76,141,255,0.15);}
+  .status-track .st-label{font-size:11.5px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
+  .status-track .st-node.done .st-label, .status-track .st-node.current .st-label{color:var(--text);}
+  @media (max-width:520px){.tr-meta{grid-template-columns:1fr;}.status-track .st-label{font-size:10px;}}
+
+  /* ---------- order form ---------- */
+  .order-form{
+    background:var(--panel);border:1px solid var(--steel-soft);border-radius:14px;padding:32px;
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-field{margin-bottom:16px;}
+  .form-field label{display:block;font-size:13px;color:var(--text-mute);margin-bottom:7px;}
+  .form-field input, .form-field select, .form-field textarea{
+    width:100%;background:var(--ink);border:1px solid var(--steel);border-radius:7px;
+    padding:11px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
+    outline:none;border-color:var(--signal);
+  }
+  .form-field textarea{resize:vertical;}
+  @media (max-width:600px){.form-row{grid-template-columns:1fr;}}
+  .order-confirm{
+    background:var(--panel);border:1px solid var(--signal-dim);border-radius:14px;padding:36px;text-align:center;
+  }
+
+  .faq-item{
+    border-bottom:1px solid var(--steel-soft);
+  }
+  .faq-q{
+    width:100%;text-align:left;background:none;border:none;color:var(--text);
+    font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;
+    padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;
+  }
+  .faq-q .plus{
+    flex-shrink:0;width:24px;height:24px;position:relative;
+  }
+  .faq-q .plus::before,.faq-q .plus::after{
+    content:"";position:absolute;background:var(--text-mute);transition:transform 0.25s ease, opacity 0.25s ease;
+  }
+  .faq-q .plus::before{top:50%;left:0;width:100%;height:1.5px;transform:translateY(-50%);}
+  .faq-q .plus::after{left:50%;top:0;width:1.5px;height:100%;transform:translateX(-50%);}
+  .faq-item.open .plus::after{opacity:0;}
+  .faq-a{
+    max-height:0;overflow:hidden;transition:max-height 0.3s ease;
+  }
+  .faq-a p{color:var(--text-mute);font-size:14.5px;padding-bottom:22px;max-width:640px;}
+  .faq-item.open .faq-a{max-height:220px;}
+
+  /* ---------- footer ---------- */
+  footer{padding:56px 0 32px;border-top:1px solid var(--steel-soft);}
+  .footer-grid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:44px;
+  }
+  .footer-col h5{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-faint);
+    letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;
+  }
+  .footer-col p, .footer-col a{font-size:14px;color:var(--text-mute);display:block;margin-bottom:10px;}
+  .footer-col a:hover{color:var(--text);}
+  .footer-bottom{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-size:12.5px;color:var(--text-faint);border-top:1px solid var(--steel-soft);padding-top:24px;
+  }
+  @media (max-width:760px){.footer-grid{grid-template-columns:1fr;}}
+
+  /* ---------- iPhone 3D models ---------- */
+  .trade-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;
+    background:linear-gradient(120deg, var(--copper-soft), var(--panel) 55%);
+    border:1px solid var(--steel-soft);border-left:3px solid var(--copper);
+    border-radius:12px;padding:26px 30px;margin-bottom:40px;
+  }
+  .trade-copy h3{font-size:20px;margin-bottom:8px;}
+  .trade-copy p{font-size:14px;color:var(--text-mute);max-width:520px;}
+  .trade-actions{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+  @media (max-width:700px){.trade-banner{padding:22px;}}
+
+  .group-label{
+    grid-column:1 / -1;
+    display:flex;align-items:center;gap:12px;
+    margin:8px 0 -2px;
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--text-faint);
+  }
+  .group-label::after{content:"";flex:1;height:1px;background:var(--steel-soft);}
+  .group-label:first-child{margin-top:0;}
+
+  .models-scroll-hint{font-size:12.5px;color:var(--text-faint);margin-top:-30px;margin-bottom:34px;font-family:'IBM Plex Mono',monospace;}
+  .models-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  }
+  .model-card{
+    background:var(--panel);border:1px solid var(--steel-soft);border-radius:14px;
+    padding:26px 20px 22px;display:flex;flex-direction:column;align-items:center;
+    transition:border-color 0.2s ease;
+  }
+  .model-card:hover{border-color:var(--signal-dim);}
+  .model-scene{
+    width:100%;height:230px;display:flex;align-items:center;justify-content:center;
+    perspective:900px;margin-bottom:18px;cursor:pointer;position:relative;
+    background:radial-gradient(ellipse at 50% 38%, #1E2430 0%, #0A0C10 62%, #060708 100%);
+    border-radius:12px;overflow:hidden;
+  }
+  .model-scene::before{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08), transparent 40%);
+    pointer-events:none;
+  }
+  .model-scene::after{
+    content:"";position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+    width:58%;height:14px;border-radius:50%;
+    background:radial-gradient(ellipse, rgba(0,0,0,0.65), transparent 72%);
+    filter:blur(2px);
+  }
+  .model-cube{
+    position:relative;width:var(--w);height:var(--h);
+    transform-style:preserve-3d;
+    transform:rotateX(-8deg) rotateY(-24deg);
+    transition:transform 0.6s ease;
+    filter:drop-shadow(0 14px 18px rgba(0,0,0,0.55));
+  }
+  .model-scene:hover .model-cube{transform:rotateX(-10deg) rotateY(-42deg);}
+  .model-scene.spinning .model-cube{transform:rotateX(-8deg) rotateY(340deg);transition:transform 1.4s cubic-bezier(.2,.7,.3,1);}
+  .model-cube .face{position:absolute;background:linear-gradient(155deg,#20262F,#12151B);border:1px solid rgba(255,255,255,0.05);}
+  .model-cube .front,.model-cube .back{width:var(--w);height:var(--h);left:0;top:0;border-radius:22px;}
+  .model-cube .front{transform:translateZ(calc(var(--d) / 2));background:linear-gradient(160deg,#161B24,#0C0E13);display:flex;flex-direction:column;align-items:center;position:relative;}
+  .model-cube .front::after{
+    content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    background:linear-gradient(115deg, rgba(255,255,255,0.14) 0%, transparent 18%, transparent 82%, rgba(255,255,255,0.06) 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  .model-cube .back{transform:rotateY(180deg) translateZ(calc(var(--d) / 2));background:var(--body-color,linear-gradient(160deg,#3A404C,#22262E));position:relative;}
+  .model-cube .back::after{
+    content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    background:linear-gradient(100deg, rgba(255,255,255,0.22) 0%, transparent 16%, transparent 78%, rgba(0,0,0,0.28) 100%);
+  }
+  .model-cube .edge-l,.model-cube .edge-r{width:var(--d);height:var(--h);top:0;border-radius:22px;background:linear-gradient(90deg,#0C0E12,#3A414E 50%,#0C0E12);}
+  .model-cube .edge-l{left:0;transform-origin:left;transform:rotateY(-90deg);}
+  .model-cube .edge-r{right:0;transform-origin:right;transform:rotateY(90deg);position:relative;}
+  .model-cube .edge-r::before{content:"";position:absolute;top:22%;right:2px;width:64%;height:9%;background:#0A0B0D;border-radius:2px;}
+  .model-cube .edge-l::before,.model-cube .edge-l::after{content:"";position:absolute;left:2px;width:64%;height:6%;background:#0A0B0D;border-radius:2px;}
+  .model-cube .edge-l::before{top:16%;}
+  .model-cube .edge-l::after{top:24%;}
+  .model-cube .edge-t,.model-cube .edge-b{width:var(--w);height:var(--d);left:0;border-radius:22px;background:linear-gradient(180deg,#0C0E12,#3A414E 50%,#0C0E12);}
+  .model-cube .edge-t{top:0;transform-origin:top;transform:rotateX(90deg);}
+  .model-cube .edge-b{bottom:0;transform-origin:bottom;transform:rotateX(-90deg);}
+  .screen-glow{
+    margin-top:14%;width:78%;height:70%;border-radius:16px;
+    background:linear-gradient(165deg,#1B2942,#0E1420 60%);
+    border:1px solid rgba(76,141,255,0.25);
+    position:relative;overflow:hidden;
+    box-shadow:inset 0 0 24px rgba(0,0,0,0.5);
+  }
+  .screen-glow::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,0.20) 48%,transparent 66%);
+    animation:sheen 3.4s ease-in-out infinite;
+  }
+  @keyframes sheen{0%{transform:translateX(-60%);}100%{transform:translateX(60%);}}
+  .island{position:absolute;top:9%;left:50%;transform:translateX(-50%);width:34%;height:6.5%;background:#000;border-radius:20px;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06);}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:42%;height:8%;background:#000;border-radius:0 0 14px 14px;}
+  .cam-cluster{position:absolute;top:7%;left:7%;width:38%;height:26%;display:flex;flex-wrap:wrap;gap:5%;align-content:flex-start;background:radial-gradient(circle at 35% 30%, rgba(0,0,0,0.35), transparent 70%);border-radius:22%;padding:4%;}
+  .cam-cluster .lens{
+    width:42%;aspect-ratio:1;border-radius:50%;position:relative;
+    background:radial-gradient(circle at 32% 28%, #6FA3FF 0%, #14202F 45%, #060A10 100%);
+    border:2px solid rgba(0,0,0,0.6);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.10), inset 0 0 6px rgba(0,0,0,0.6);
+  }
+  .cam-cluster .lens::after{
+    content:"";position:absolute;top:20%;left:24%;width:26%;height:26%;border-radius:50%;
+    background:rgba(255,255,255,0.55);filter:blur(1px);
+  }
+  .model-cube .photo-face{
+    background-size:cover;background-position:center;
+  }
+  .model-cube .front.photo-face::after{
+    content:"";position:absolute;inset:0;border-radius:22px;pointer-events:none;
+    background:linear-gradient(115deg, rgba(255,255,255,0.12) 0%, transparent 20%, transparent 80%, rgba(255,255,255,0.05) 100%);
+  }
+  .model-scene.has-photo .spin-badge{color:var(--signal);border-color:var(--signal-dim);}
+  .spin-badge{
+    position:absolute;bottom:-2px;right:6px;
+    display:flex;align-items:center;gap:5px;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-faint);
+    background:var(--panel-2);border:1px solid var(--steel-soft);padding:4px 9px;border-radius:12px;
+  }
+  .spin-badge svg{width:11px;height:11px;}
+  .model-card h4{font-size:16.5px;margin-bottom:4px;}
+  .model-card .model-colors{font-size:11.5px;color:var(--text-faint);margin-bottom:16px;font-family:'IBM Plex Mono',monospace;}
+  .model-specs{width:100%;display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+  .model-specs .spec-row{display:flex;justify-content:space-between;font-size:12.5px;border-bottom:1px dashed var(--steel-soft);padding-bottom:9px;}
+  .model-specs .spec-row .k{color:var(--text-faint);}
+  .model-specs .spec-row .v{color:var(--text-mute);text-align:right;max-width:60%;}
+  .model-card .repair-note{
+    font-size:12px;color:var(--signal);background:rgba(76,141,255,0.08);border:1px solid var(--signal-dim);
+    padding:8px 10px;border-radius:8px;text-align:center;width:100%;
+  }
+
+  @media (max-width:980px){.models-grid{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:520px){.models-grid{grid-template-columns:1fr;}}
+
+  /* ---------- floating whatsapp ---------- */
+  .float-wa{
+    position:fixed;bottom:24px;right:24px;z-index:60;
+    display:flex;align-items:center;gap:10px;
+    background:#25D366;color:#0F1218;
+    padding:14px 18px;border-radius:30px;font-weight:600;font-size:14px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+  .float-wa::before{
+    content:"";position:absolute;inset:-4px;border-radius:34px;border:2px solid #25D366;opacity:0.5;
+    animation:pulse-ring 2s ease-out infinite;
+  }
+  @keyframes pulse-ring{0%{transform:scale(1);opacity:0.5;}100%{transform:scale(1.25);opacity:0;}}
+  .float-wa svg{width:20px;height:20px;flex-shrink:0;}
+  .float-wa .wa-label{display:none;}
+  @media (min-width:640px){.float-wa .wa-label{display:inline;}}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a href="#top" class="logo">
+        <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true" class="brand-mark">
+            <defs>
+              <linearGradient id="navLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#6FA3FF"/><stop offset="1" stop-color="#12192B"/></linearGradient>
+              <linearGradient id="navLogoGlow" x1="0" y1="0" x2="48" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity="0.32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            </defs>
+            <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#navLogoGrad)"/>
+            <rect x="1" y="1" width="46" height="22" rx="13" fill="url(#navLogoGlow)"/>
+            <g fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round">
+              <path d="M14 13.5h20"/>
+              <path d="M14 24h15"/>
+              <path d="M14 34.5h20"/>
+            </g>
+            <rect x="1.5" y="1.5" width="45" height="45" rx="12.5" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
+            <circle cx="38.5" cy="10" r="2.6" fill="#D98A4A"/>
+          </svg>
+        EGYWARE <span class="sub">TRADING LLC</span>
+      </a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#models">iPhone Models</a>
+        <a href="#process">Process</a>
+        <a href="#brands">Brands</a>
+        <a href="#locations">Locations</a>
+        <a href="#book">Book Repair</a>
+        <a href="#track">Track Repair</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <a href="https://wa.me/971569556165" class="nav-cta" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.77 1.24-.47.06-1.06.09-1.71-.11a15.8 15.8 0 01-1.55-.57c-2.73-1.18-4.51-3.94-4.65-4.13-.14-.19-1.11-1.47-1.11-2.81 0-1.34.7-2 .95-2.27.25-.28.55-.34.73-.34h.53c.17 0 .4-.03.62.48.22.51.75 1.77.82 1.9.07.13.11.28.02.46-.09.18-.14.28-.28.44-.14.15-.29.34-.42.46-.14.13-.29.28-.13.55.17.28.75 1.25 1.62 2.02 1.11.99 2.05 1.3 2.32 1.44.28.14.44.12.6-.06.17-.19.7-.82.89-1.1.19-.28.37-.23.62-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.15 1.31z"/></svg>
+        WhatsApp
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow"><span class="mono">●</span> DUBAI · SAME-DAY DIAGNOSTICS</div>
+        <h1>Your device breaks.<br>We <em>bring it back.</em></h1>
+        <p class="lead">Egyware Trading LLC repairs iPhones, Samsung, iPad, MacBook and more — genuine parts, transparent pricing, and a free diagnostic before any work begins. Walk in, or we come to you.</p>
+        <div class="btn-row">
+          <a href="https://wa.me/971569556165" class="btn btn-primary" target="_blank" rel="noopener">Chat on WhatsApp</a>
+          <a href="tel:+971569556165" class="btn btn-ghost">Call +971 56 955 6165</a>
+        </div>
+        <div class="trust-row">
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Free inspection</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Genuine parts</div>
+          <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Pick-up & delivery</div>
+        </div>
+      </div>
+      <div class="device-scan">
+        <div class="ticket-id">TICKET / #ET-0142 / DIAGNOSTIC RUNNING</div>
+        <div class="phone-outline"><div class="scan-line"></div></div>
+        <div class="scan-status"><span class="blink"></span>ANALYZING HARDWARE…</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">// Repair services</div>
+        <h2>Every fault, one counter.</h2>
+        <p>From cracked glass to dead batteries — our technicians handle it under one roof, with the same warranty on every job.</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+            <div class="ticket-num mono">SVC-01</div>
+          </div>
+          <h3>Screen & glass</h3>
+          <ul>
+            <li>Cracked front glass replacement</li>
+            <li>Unresponsive touch panels</li>
+            <li>Broken back glass</li>
+            <li>Display flicker & dead pixels</li>
+          </ul>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="7" width="14" height="10" rx="2"/><path d="M19 10h2v4h-2"/></svg></div>
+            <div class="ticket-num mono">SVC-02</div>
+          </div>
+          <h3>Battery & power</h3>
+          <ul>
+            <li>Battery replacement & drainage fixes</li>
+            <li>Charging port repair</li>
+            <li>Device won't turn on</li>
+            <li>Overheating diagnostics</li>
+          </ul>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z"/><path d="M8 12h8M12 8v8"/></svg></div>
+            <div class="ticket-num mono">SVC-03</div>
+          </div>
+          <h3>Water damage</h3>
+          <ul>
+            <li>Full liquid-damage diagnostic</li>
+            <li>Corrosion cleaning & board repair</li>
+            <li>Data rescue attempts</li>
+            <li>Moisture sensor reset</li>
+          </ul>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="4"/><path d="M4 8h3l2-3h6l2 3h3v11H4z"/></svg></div>
+            <div class="ticket-num mono">SVC-04</div>
+          </div>
+          <h3>Camera & audio</h3>
+          <ul>
+            <li>Front & rear camera replacement</li>
+            <li>Speaker & earpiece repair</li>
+            <li>Microphone not working</li>
+            <li>Blurry or black camera fix</li>
+          </ul>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div>
+            <div class="ticket-num mono">SVC-05</div>
+          </div>
+          <h3>Buttons & controls</h3>
+          <ul>
+            <li>Power, volume & home button</li>
+            <li>Face ID / fingerprint faults</li>
+            <li>Vibration motor issues</li>
+            <li>Sticky or unresponsive keys</li>
+          </ul>
+        </div>
+
+        <div class="ticket">
+          <div class="ticket-top">
+            <div class="ticket-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div>
+            <div class="ticket-num mono">SVC-06</div>
+          </div>
+          <h3>Software & data</h3>
+          <ul>
+            <li>Boot loops & frozen screens</li>
+            <li>OS updates & restores</li>
+            <li>Virus & performance issues</li>
+            <li>Data backup before repair</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- IPHONE 3D MODELS -->
+  <section id="models">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">// Models we repair</div>
+        <h2>Know your model before you walk in.</h2>
+        <p>Tap any device to spin it — quick specs to help you identify your exact model, so we can quote you accurately on WhatsApp.</p>
+      </div>
+
+      <div class="models-grid" id="modelsGrid"></div>
+
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">// How it works</div>
+        <h2>Four steps, no surprises.</h2>
+        <p>You approve every cost before we touch a screw.</p>
+      </div>
+      <div class="process-strip">
+        <div class="process-grid">
+          <div class="process-step">
+            <div class="num">01</div>
+            <h4>Diagnose</h4>
+            <p>Drop off, WhatsApp us, or request pick-up. We run a free hardware & software check.</p>
+          </div>
+          <div class="process-step">
+            <div class="num">02</div>
+            <h4>Quote</h4>
+            <p>You get an upfront price and timeframe — nothing starts without your go-ahead.</p>
+          </div>
+          <div class="process-step">
+            <div class="num">03</div>
+            <h4>Repair</h4>
+            <p>Genuine or original-spec parts, fitted by trained technicians, most jobs same-day.</p>
+          </div>
+          <div class="process-step">
+            <div class="num">04</div>
+            <h4>Collect</h4>
+            <p>Pick it up in-store or we deliver back to your door, tested and warrantied.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US + BRANDS -->
+  <section id="brands">
+    <div class="wrap why-grid">
+      <div>
+        <div class="section-tag">// Why Egyware</div>
+        <h2 style="margin-bottom:28px;">Built on trust, not just tools.</h2>
+        <div class="why-list">
+          <div class="why-item">
+            <div class="mark">01</div>
+            <div><h4>Trained technicians</h4><p>Certified specialists across iOS and Android hardware, not generalists.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">02</div>
+            <div><h4>Warrantied work</h4><p>Every repair is backed by a written guarantee on parts and labour.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">03</div>
+            <div><h4>Transparent pricing</h4><p>Free inspection, fixed quote, zero hidden charges at pickup.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">04</div>
+            <div><h4>One trusted counter</h4><p>Deira, Dubai — plus pick-up & delivery anywhere in the city.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="brand-panel">
+        <div class="section-tag">// Brands we service</div>
+        <h3 style="font-size:20px;">One counter for every device you own.</h3>
+        <div class="brand-list">
+          <span class="brand-pill">iPhone</span>
+          <span class="brand-pill">Samsung Galaxy</span>
+          <span class="brand-pill">iPad</span>
+          <span class="brand-pill">MacBook</span>
+          <span class="brand-pill">Google Pixel</span>
+          <span class="brand-pill">Huawei</span>
+          <span class="brand-pill">OnePlus</span>
+          <span class="brand-pill">Xiaomi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUY & SELL PHONES -->
+  <section id="buy-sell">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">// Also at Egyware</div>
+        <h2>The best place to buy phones in Dubai — new & pre-owned.</h2>
+        <p>Not just repairs. We stock brand-new sealed devices and hand-inspected, warrantied pre-owned phones, and we'll buy or trade in your old one.</p>
+      </div>
+      <div class="why-grid" style="align-items:center;">
+        <div class="why-list">
+          <div class="why-item">
+            <div class="mark">01</div>
+            <div><h4>Brand-new, sealed units</h4><p>Latest iPhone, Samsung, Pixel and more, sourced genuine with full box warranty.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">02</div>
+            <div><h4>Inspected pre-owned</h4><p>Every used device is battery-tested, function-checked and graded before sale.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">03</div>
+            <div><h4>Sell or trade-in</h4><p>Get a fair cash quote for your old phone, or trade it toward an upgrade.</p></div>
+          </div>
+          <div class="why-item">
+            <div class="mark">04</div>
+            <div><h4>Best prices in Dubai</h4><p>Competitive pricing on both new and pre-owned, with no hidden fees.</p></div>
+          </div>
+        </div>
+        <div class="brand-panel">
+          <div class="section-tag">// Ready to buy or sell?</div>
+          <h3 style="font-size:20px;margin-bottom:18px;">Message us your model — we'll quote you in minutes.</h3>
+          <div class="btn-row" style="margin-bottom:0;">
+            <a href="https://wa.me/971569556165?text=Hi%2C%20I%27m%20interested%20in%20buying%20a%20phone" class="btn btn-primary" target="_blank" rel="noopener">Shop phones</a>
+            <a href="https://wa.me/971569556165?text=Hi%2C%20I%27d%20like%20to%20sell%20my%20phone" class="btn btn-ghost" target="_blank" rel="noopener">Sell / trade-in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOCATIONS -->
+  <section id="locations">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="section-tag">// Find us</div>
+        <h2>Our counter in Dubai.</h2>
+        <p>Walk in, or book a pick-up and we'll come to you.</p>
+      </div>
+      <div class="loc-grid loc-grid-single">
+        <div class="loc-card">
+          <span class="loc-tag mono">EGYWARE TRADING LLC</span>
+          <h3>Deira, Muraqqabat area</h3>
+          <address>Farig Murar<br>Near Mian Jee Restaurant<br>Deira, Dubai, United Arab Emirates</address>
+          <a class="loc-link" href="https://www.google.com/maps/search/?api=1&query=Mian+Jee+Restaurant+Deira+Dubai" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Get directions
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACK REPAIR -->
+  <section id="track">
+    <div class="wrap" style="max-width:640px;">
+      <div class="section-head">
+        <div class="section-tag">// Track your repair</div>
+        <h2>Where's my device?</h2>
+        <p>Enter your ticket ID (from your WhatsApp confirmation) or your phone number to check status.</p>
+      </div>
+      <div class="track-box">
+        <div class="track-input-row">
+          <input type="text" id="trackInput" placeholder="e.g. ET-104 or 05XXXXXXXX">
+          <button class="btn btn-primary" onclick="trackOrder()">Check status</button>
+        </div>
+        <div id="trackResult" class="track-result" style="display:none;"></div>
+        <div id="trackEmpty" class="track-empty" style="display:none;">No request found with that ticket ID or phone number. Double-check it, or message us on WhatsApp.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOK REPAIR -->
+  <section id="book">
+    <div class="wrap" style="max-width:720px;">
+      <div class="section-head">
+        <div class="section-tag">// Book a repair</div>
+        <h2>Submit your device details.</h2>
+        <p>Fill this in and it lands straight in our system — we'll confirm your quote on WhatsApp within minutes.</p>
+      </div>
+      <form id="orderForm" class="order-form">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="ofName">Full name</label>
+            <input type="text" id="ofName" required placeholder="Your name">
+          </div>
+          <div class="form-field">
+            <label for="ofPhone">WhatsApp / phone number</label>
+            <input type="tel" id="ofPhone" required placeholder="05X XXX XXXX">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="ofDevice">Device model</label>
+            <input type="text" id="ofDevice" required placeholder="e.g. iPhone 15 Pro Max">
+          </div>
+          <div class="form-field">
+            <label for="ofService">Service needed</label>
+            <select id="ofService" required>
+              <option value="">Select an issue</option>
+              <option>Screen / glass repair</option>
+              <option>Battery replacement</option>
+              <option>Water damage</option>
+              <option>Camera / speaker / mic</option>
+              <option>Charging port</option>
+              <option>Software issue</option>
+              <option>Buy new / pre-owned phone</option>
+              <option>Sell / trade-in my phone</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="ofMethod">How would you like this handled?</label>
+            <select id="ofMethod">
+              <option>Walk-in to Deira store</option>
+              <option>Pick-up & delivery</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="ofNotes">Notes (optional)</label>
+          <textarea id="ofNotes" rows="3" placeholder="Anything else we should know?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Submit request</button>
+      </form>
+      <div id="orderConfirm" class="order-confirm" style="display:none;">
+        <div class="ticket-icon" style="margin:0 auto 14px;color:var(--ok);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h3 style="margin-bottom:8px;">Request received — <span id="ticketOut" class="mono" style="color:var(--signal);"></span></h3>
+        <p style="color:var(--text-mute);font-size:14px;margin-bottom:18px;">We're opening WhatsApp so you can send this straight to our team.</p>
+        <a id="waConfirmLink" href="#" class="btn btn-primary" target="_blank" rel="noopener">Continue on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band" style="padding-top:0;padding-bottom:0;">
+    <div class="wrap" style="padding:70px 24px;">
+      <h2>Get a free diagnostic today.</h2>
+      <p>Message us your device model and the issue — we'll reply with a price in minutes.</p>
+      <div class="btn-row" style="justify-content:center;">
+        <a href="https://wa.me/971569556165" class="btn btn-primary" target="_blank" rel="noopener">Message on WhatsApp</a>
+        <a href="tel:+971569556165" class="btn btn-ghost">Call now</a>
+      </div>
+      <div class="cta-numbers">
+        <div>WhatsApp / Call: <span>+971 56 955 6165</span></div>
+        <div>Hours: <span>Open daily</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap" style="max-width:760px;">
+      <div class="section-head">
+        <div class="section-tag">// Questions</div>
+        <h2>Frequently asked.</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q">Do you offer a free inspection before repair?<span class="plus"></span></button>
+          <div class="faq-a"><p>Yes. We diagnose your device at no cost and give you a fixed quote before any work begins.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Can you repair my device the same day?<span class="plus"></span></button>
+          <div class="faq-a"><p>Most screen, battery and port repairs are completed same-day. Board-level or water-damage repairs may take longer — we'll confirm the timeframe upfront.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do you offer pick-up and delivery?<span class="plus"></span></button>
+          <div class="faq-a"><p>Yes, across Dubai. Message us on WhatsApp with your location and we'll arrange collection and drop-off.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Will a repair affect my data?<span class="plus"></span></button>
+          <div class="faq-a"><p>Most repairs don't touch your data, but we recommend backing up beforehand. Our team can assist with backup before starting work.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Are repairs covered by warranty?<span class="plus"></span></button>
+          <div class="faq-a"><p>Every repair comes with a written warranty covering parts and labour — details are confirmed on your ticket at drop-off.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <a href="#top" class="logo" style="margin-bottom:14px;">
+          <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true" class="brand-mark">
+            <defs>
+              <linearGradient id="footLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#6FA3FF"/><stop offset="1" stop-color="#12192B"/></linearGradient>
+              <linearGradient id="footLogoGlow" x1="0" y1="0" x2="48" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity="0.32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+            </defs>
+            <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#footLogoGrad)"/>
+            <rect x="1" y="1" width="46" height="22" rx="13" fill="url(#footLogoGlow)"/>
+            <g fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round">
+              <path d="M14 13.5h20"/>
+              <path d="M14 24h15"/>
+              <path d="M14 34.5h20"/>
+            </g>
+            <rect x="1.5" y="1.5" width="45" height="45" rx="12.5" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
+            <circle cx="38.5" cy="10" r="2.6" fill="#D98A4A"/>
+          </svg>
+          EGYWARE <span class="sub">TRADING LLC</span>
+        </a>
+        <p style="max-width:280px;">Device repair specialists in Dubai — iPhone, Samsung, iPad, MacBook and more, fixed the right way.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Contact</h5>
+        <a href="tel:+971569556165">+971 56 955 6165</a>
+        <a href="https://wa.me/971569556165" target="_blank" rel="noopener">WhatsApp us</a>
+      </div>
+      <div class="footer-col">
+        <h5>Location</h5>
+        <p>Deira — Farig Murar, near Mian Jee Restaurant</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Egyware Trading LLC. All rights reserved.</span>
+      <span>Dubai, United Arab Emirates</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/971569556165" class="float-wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.77 1.24-.47.06-1.06.09-1.71-.11a15.8 15.8 0 01-1.55-.57c-2.73-1.18-4.51-3.94-4.65-4.13-.14-.19-1.11-1.47-1.11-2.81 0-1.34.7-2 .95-2.27.25-.28.55-.34.73-.34h.53c.17 0 .4-.03.62.48.22.51.75 1.77.82 1.9.07.13.11.28.02.46-.09.18-.14.28-.28.44-.14.15-.29.34-.42.46-.14.13-.29.28-.13.55.17.28.75 1.25 1.62 2.02 1.11.99 2.05 1.3 2.32 1.44.28.14.44.12.6-.06.17-.19.7-.82.89-1.1.19-.28.37-.23.62-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.15 1.31z"/></svg>
+  <span class="wa-label">WhatsApp us</span>
+</a>
+
+<script>
+  /* ---------- shared order storage (localStorage, read by admin.html) ---------- */
+  const ORDERS_KEY = 'egyware_orders';
+  function getOrders(){
+    try{ return JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; }catch(e){ return []; }
+  }
+  function saveOrders(list){
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
+  }
+  function nextTicketId(list){
+    const n = 100 + list.length;
+    return 'ET-' + n;
+  }
+
+  const STATUS_STEPS = ['New','In Progress','Ready','Completed'];
+  function trackOrder(){
+    const q = document.getElementById('trackInput').value.trim().toLowerCase();
+    const resultEl = document.getElementById('trackResult');
+    const emptyEl = document.getElementById('trackEmpty');
+    resultEl.style.display = 'none';
+    emptyEl.style.display = 'none';
+    if(!q) return;
+
+    const list = getOrders();
+    const order = list.find(o =>
+      o.id.toLowerCase() === q ||
+      (o.phone || '').replace(/[^0-9]/g,'').includes(q.replace(/[^0-9]/g,'')) && q.replace(/[^0-9]/g,'').length >= 6
+    );
+
+    if(!order){ emptyEl.style.display = 'block'; return; }
+
+    const stepIndex = STATUS_STEPS.indexOf(order.status);
+    const stepsHtml = STATUS_STEPS.map((s,i)=>{
+      const cls = i < stepIndex ? 'done' : (i === stepIndex ? 'current' : '');
+      const dotContent = i < stepIndex
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>'
+        : '';
+      return `<div class="st-node ${cls}"><div class="st-dot">${dotContent}</div><div class="st-label">${s}</div></div>`;
+    }).join('');
+
+    resultEl.innerHTML = `
+      <div class="tr-head">
+        <span class="tid">${order.id}</span>
+        <span class="tdate">Submitted ${fmtTrackDate(order.date)}</span>
+      </div>
+      <div class="tr-meta">
+        <div><span class="k">Device: </span>${escapeHtmlTrack(order.device)}</div>
+        <div><span class="k">Service: </span>${escapeHtmlTrack(order.service)}</div>
+      </div>
+      <div class="status-track">${stepsHtml}</div>
+    `;
+    resultEl.style.display = 'block';
+  }
+  function fmtTrackDate(iso){
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+  }
+  function escapeHtmlTrack(str){
+    if(!str) return '';
+    return str.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  document.getElementById('trackInput')?.addEventListener('keydown', e=>{ if(e.key==='Enter') trackOrder(); });
+
+  const orderForm = document.getElementById('orderForm');
+  if(orderForm){
+    orderForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = document.getElementById('ofName').value.trim();
+      const phone = document.getElementById('ofPhone').value.trim();
+      const device = document.getElementById('ofDevice').value.trim();
+      const service = document.getElementById('ofService').value;
+      const method = document.getElementById('ofMethod').value;
+      const notes = document.getElementById('ofNotes').value.trim();
+
+      const list = getOrders();
+      const ticket = nextTicketId(list);
+      list.unshift({
+        id: ticket,
+        name, phone, device, service, method, notes,
+        status: 'New',
+        date: new Date().toISOString()
+      });
+      saveOrders(list);
+
+      const msg = `Hi Egyware Trading! New request ${ticket}%0A` +
+        `Name: ${encodeURIComponent(name)}%0A` +
+        `Phone: ${encodeURIComponent(phone)}%0A` +
+        `Device: ${encodeURIComponent(device)}%0A` +
+        `Service: ${encodeURIComponent(service)}%0A` +
+        `Method: ${encodeURIComponent(method)}` +
+        (notes ? `%0ANotes: ${encodeURIComponent(notes)}` : '');
+      const waLink = `https://wa.me/971569556165?text=${msg}`;
+
+      document.getElementById('ticketOut').textContent = ticket;
+      document.getElementById('waConfirmLink').href = waLink;
+      orderForm.style.display = 'none';
+      document.getElementById('orderConfirm').style.display = 'block';
+      window.open(waLink, '_blank');
+    });
+  }
+
+  function spinModel(scene){
+    scene.classList.add('spinning');
+    clearTimeout(scene._spinTimer);
+    scene._spinTimer = setTimeout(()=>{ scene.classList.remove('spinning'); }, 1500);
+  }
+
+  const IPHONE_MODELS = [
+    { group:"X Series", name:"iPhone X", colors:"Silver · Space Gray", display:"5.8″ Super Retina OLED", chip:"A11 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#3B3D42,#1C1D20" },
+    { group:"X Series", name:"iPhone XR", colors:"White · Black · Blue · Yellow · Coral · Red", display:"6.1″ Liquid Retina LCD", chip:"A12 Bionic", camera:"Single 12MP", storage:"From 64GB", cams:1, top:"notch", body:"#3E6E9E,#1E3550" },
+    { group:"X Series", name:"iPhone XS", colors:"Silver · Space Gray · Gold", display:"5.8″ Super Retina OLED", chip:"A12 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#8B8CA0,#4E4F5E" },
+    { group:"X Series", name:"iPhone XS Max", colors:"Silver · Space Gray · Gold", display:"6.5″ Super Retina OLED", chip:"A12 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#8B8CA0,#4E4F5E" },
+
+    { group:"11 Series", name:"iPhone 11", colors:"Purple · Yellow · Green · Black · White · Red", display:"6.1″ Liquid Retina LCD", chip:"A13 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#586B5E,#2B342D" },
+    { group:"11 Series", name:"iPhone 11 Pro", colors:"Midnight Green · Space Gray · Silver · Gold", display:"5.8″ Super Retina XDR", chip:"A13 Bionic", camera:"Triple 12MP", storage:"From 64GB", cams:3, top:"notch", body:"#37453E,#1B231F" },
+    { group:"11 Series", name:"iPhone 11 Pro Max", colors:"Midnight Green · Space Gray · Silver · Gold", display:"6.5″ Super Retina XDR", chip:"A13 Bionic", camera:"Triple 12MP", storage:"From 64GB", cams:3, top:"notch", body:"#37453E,#1B231F" },
+
+    { group:"12 Series", name:"iPhone 12 Mini", colors:"Black · White · Red · Green · Blue · Purple", display:"5.4″ Super Retina XDR", chip:"A14 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#40506B,#212B3B" },
+    { group:"12 Series", name:"iPhone 12", colors:"Black · White · Red · Green · Blue · Purple", display:"6.1″ Super Retina XDR", chip:"A14 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#40506B,#212B3B" },
+    { group:"12 Series", name:"iPhone 12 Pro", colors:"Pacific Blue · Gold · Silver · Graphite", display:"6.1″ Super Retina XDR", chip:"A14 Bionic", camera:"Triple 12MP", storage:"From 128GB", cams:3, top:"notch", body:"#2E4A5E,#182731" },
+    { group:"12 Series", name:"iPhone 12 Pro Max", colors:"Pacific Blue · Gold · Silver · Graphite", display:"6.7″ Super Retina XDR", chip:"A14 Bionic", camera:"Triple 12MP", storage:"From 128GB", cams:3, top:"notch", body:"#2E4A5E,#182731" },
+
+    { group:"13 Series", name:"iPhone 13 Mini", colors:"Midnight · Starlight · Blue · Pink · Red", display:"5.4″ Super Retina XDR", chip:"A15 Bionic", camera:"Dual 12MP", storage:"From 128GB", cams:2, top:"notch", body:"#7A828C,#3E434A" },
+    { group:"13 Series", name:"iPhone 13", colors:"Midnight · Starlight · Blue · Pink · Red", display:"6.1″ Super Retina XDR", chip:"A15 Bionic", camera:"Dual 12MP", storage:"From 128GB", cams:2, top:"notch", body:"#7A828C,#3E434A" },
+    { group:"13 Series", name:"iPhone 13 Pro", colors:"Sierra Blue · Graphite · Gold · Silver", display:"6.1″ ProMotion 120Hz", chip:"A15 Bionic", camera:"Triple 12MP", storage:"From 128GB", cams:3, top:"notch", body:"#4C6E88,#263745" },
+    { group:"13 Series", name:"iPhone 13 Pro Max", colors:"Sierra Blue · Graphite · Gold · Silver", display:"6.7″ ProMotion 120Hz", chip:"A15 Bionic", camera:"Triple 12MP", storage:"From 128GB", cams:3, top:"notch", body:"#4C6E88,#263745" },
+
+    { group:"14 Series", name:"iPhone 14", colors:"Midnight · Starlight · Blue · Purple · Red", display:"6.1″ Super Retina XDR", chip:"A15 Bionic", camera:"Dual 12MP", storage:"From 128GB", cams:2, top:"notch", body:"#6E4A38,#3A281E" },
+    { group:"14 Series", name:"iPhone 14 Plus", colors:"Midnight · Starlight · Blue · Purple · Red", display:"6.7″ Super Retina XDR", chip:"A15 Bionic", camera:"Dual 12MP", storage:"From 128GB", cams:2, top:"notch", body:"#6E4A38,#3A281E" },
+    { group:"14 Series", name:"iPhone 14 Pro", colors:"Space Black · Silver · Gold · Deep Purple", display:"6.1″ Dynamic Island ProMotion", chip:"A16 Bionic", camera:"Triple 48MP", storage:"From 128GB", cams:3, top:"island", body:"#4A3A5C,#251D2E" },
+    { group:"14 Series", name:"iPhone 14 Pro Max", colors:"Space Black · Silver · Gold · Deep Purple", display:"6.7″ Dynamic Island ProMotion", chip:"A16 Bionic", camera:"Triple 48MP", storage:"From 128GB", cams:3, top:"island", body:"#4A3A5C,#251D2E" },
+
+    { group:"15 Series", name:"iPhone 15", colors:"Green · Blue · Pink · Yellow · Black", display:"6.1″ Dynamic Island", chip:"A16 Bionic", camera:"Dual 48MP", storage:"From 128GB", cams:2, top:"island", body:"#3F4B3E,#20261F" },
+    { group:"15 Series", name:"iPhone 15 Plus", colors:"Green · Blue · Pink · Yellow · Black", display:"6.7″ Dynamic Island", chip:"A16 Bionic", camera:"Dual 48MP", storage:"From 128GB", cams:2, top:"island", body:"#3F4B3E,#20261F" },
+    { group:"15 Series", name:"iPhone 15 Pro", colors:"Natural · Blue · White · Black Titanium", display:"6.1″ Dynamic Island ProMotion", chip:"A17 Pro", camera:"Triple 48MP", storage:"From 128GB", cams:3, top:"island", body:"#5C5A54,#2E2D29" },
+    { group:"15 Series", name:"iPhone 15 Pro Max", colors:"Natural · Blue · White · Black Titanium", display:"6.7″ Dynamic Island ProMotion", chip:"A17 Pro", camera:"Triple 48MP, 5x zoom", storage:"From 256GB", cams:3, top:"island", body:"#5C5A54,#2E2D29" },
+
+    { group:"16 Series", name:"iPhone 16", colors:"Ultramarine · Teal · Pink · White · Black", display:"6.1″ Dynamic Island", chip:"A18", camera:"Dual 48MP", storage:"From 128GB", cams:2, top:"island", body:"#5A6E88,#2B3542" },
+    { group:"16 Series", name:"iPhone 16 Plus", colors:"Ultramarine · Teal · Pink · White · Black", display:"6.7″ Dynamic Island", chip:"A18", camera:"Dual 48MP", storage:"From 128GB", cams:2, top:"island", body:"#5A6E88,#2B3542" },
+    { group:"16 Series", name:"iPhone 16 Pro", colors:"Desert Titanium · Natural · White · Black Titanium", display:"6.3″ Dynamic Island ProMotion", chip:"A18 Pro", camera:"Triple 48MP", storage:"From 128GB", cams:3, top:"island", body:"#8A7358,#463A2C" },
+    { group:"16 Series", name:"iPhone 16 Pro Max", colors:"Desert Titanium · Natural · White · Black Titanium", display:"6.9″ Dynamic Island ProMotion", chip:"A18 Pro", camera:"Triple 48MP", storage:"From 256GB", cams:3, top:"island", body:"#8A7358,#463A2C" },
+
+    { group:"17 Series", name:"iPhone 17", colors:"Lavender · Sage · Mist Blue · White · Black", display:"6.3″ Dynamic Island ProMotion", chip:"A19", camera:"Dual 48MP Fusion", storage:"From 256GB", cams:2, top:"island", body:"#8B8CA0,#4E4F5E" },
+    { group:"17 Series", name:"iPhone 17 Air", colors:"Space Black · Cloud White · Sky Blue", display:"6.5″ Dynamic Island ProMotion", chip:"A19 Pro", camera:"Single 48MP Fusion", storage:"From 256GB", cams:1, top:"island", body:"#7A828C,#3E434A" },
+    { group:"17 Series", name:"iPhone 17 Pro", colors:"Cosmic Orange · Silver · Deep Blue", display:"6.3″ Dynamic Island ProMotion", chip:"A19 Pro", camera:"Triple 48MP, 8x zoom", storage:"From 256GB", cams:3, top:"island", body:"#3E4C5C,#20272E" },
+    { group:"17 Series", name:"iPhone 17 Pro Max", colors:"Cosmic Orange · Silver · Deep Blue", display:"6.9″ Dynamic Island ProMotion", chip:"A19 Pro", camera:"Triple 48MP, 8x zoom", storage:"From 256GB", cams:3, top:"island", body:"#4A3A2E,#2A2019" },
+  ];
+
+  const PHOTOS_KEY = 'egyware_model_photos';
+  function getModelPhotos(){
+    try{ return JSON.parse(localStorage.getItem(PHOTOS_KEY)) || {}; }catch(e){ return {}; }
+  }
+
+  function renderModelCard(m, sizeKey){
+    const sizes = { sm:{w:104,h:212,d:12}, md:{w:110,h:224,d:13}, lg:{w:120,h:246,d:14} };
+    const s = sizes[sizeKey] || sizes.md;
+    const topEl = m.top === "island" ? '<div class="island"></div>' : '<div class="notch"></div>';
+    const lensCount = Math.min(m.cams, 3);
+    let lenses = "";
+    for(let i=0;i<lensCount;i++){ lenses += '<div class="lens"></div>'; }
+
+    const photos = getModelPhotos();
+    const photo = photos[m.name];
+    const frontFace = photo
+      ? `<div class="face front photo-face" style="background-image:url('${photo}')"></div>`
+      : `<div class="face front"><div class="screen-glow">${topEl}</div></div>`;
+    const backFace = photo
+      ? `<div class="face back photo-face" style="background-image:url('${photo}')"></div>`
+      : `<div class="face back" style="--body-color:linear-gradient(155deg,${m.body});"><div class="cam-cluster">${lenses}</div></div>`;
+    const badgeLabel = photo ? 'Tap for 3D view' : 'Tap to spin';
+
+    return `
+        <div class="model-card">
+          <div class="model-scene ${photo ? 'has-photo' : ''}" style="--w:${s.w}px;--h:${s.h}px;--d:${s.d}px;" onclick="spinModel(this)">
+            <div class="model-cube">
+              ${frontFace}
+              ${backFace}
+              <div class="face edge-l"></div><div class="face edge-r"></div><div class="face edge-t"></div><div class="face edge-b"></div>
+            </div>
+            <div class="spin-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/></svg>${badgeLabel}</div>
+          </div>
+          <h4>${m.name}</h4>
+          <div class="model-colors">${m.colors}</div>
+          <div class="model-specs">
+            <div class="spec-row"><span class="k">Display</span><span class="v">${m.display}</span></div>
+            <div class="spec-row"><span class="k">Chip</span><span class="v">${m.chip}</span></div>
+            <div class="spec-row"><span class="k">Camera</span><span class="v">${m.camera}</span></div>
+            <div class="spec-row"><span class="k">Storage</span><span class="v">${m.storage}</span></div>
+          </div>
+          <div class="repair-note">Screen · Battery · Camera repair available</div>
+        </div>`;
+  }
+
+  (function initModelsGrid(){
+    const grid = document.getElementById('modelsGrid');
+    if(!grid) return;
+    let html = "";
+    let lastGroup = null;
+    IPHONE_MODELS.forEach(m=>{
+      if(m.group !== lastGroup){
+        html += `<div class="group-label">${m.group}</div>`;
+        lastGroup = m.group;
+      }
+      html += renderModelCard(m, 'md');
+    });
+    html += `
+        <div class="model-card" style="justify-content:center;">
+          <div style="text-align:center;padding:40px 8px;">
+            <div class="ticket-icon" style="margin:0 auto 16px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+            <h4 style="margin-bottom:8px;">Don't see your model?</h4>
+            <p style="font-size:13.5px;color:var(--text-mute);margin-bottom:20px;">We also repair Samsung, iPad, MacBook, Google Pixel, Huawei & OnePlus.</p>
+            <a href="https://wa.me/971569556165" class="btn btn-primary" style="width:100%;justify-content:center;" target="_blank" rel="noopener">Ask on WhatsApp</a>
+          </div>
+        </div>`;
+    grid.innerHTML = html;
+  })();
+
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click',()=>{
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+</script>
+
+</body>
+</html>
