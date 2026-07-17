@@ -526,6 +526,44 @@
     background:linear-gradient(115deg, rgba(255,255,255,0.12) 0%, transparent 20%, transparent 80%, rgba(255,255,255,0.05) 100%);
   }
   .model-scene.has-photo .spin-badge{color:var(--signal);border-color:var(--signal-dim);}
+  .model-scene.has-photo{cursor:zoom-in;}
+
+  /* ---------- photo lightbox ---------- */
+  .lightbox{
+    display:none;position:fixed;inset:0;z-index:200;
+    background:rgba(6,7,9,0.92);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;padding:40px 20px;
+  }
+  .lightbox.open{display:flex;}
+  .lightbox-inner{
+    display:flex;flex-direction:column;align-items:center;gap:22px;
+    max-width:520px;width:100%;
+    animation:lightbox-in 0.3s ease;
+  }
+  @keyframes lightbox-in{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
+  .lightbox-scene{
+    width:100%;height:min(58vh,480px);
+    perspective:1100px;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(ellipse at 50% 38%, #1E2430 0%, #0A0C10 62%, #060708 100%);
+    border-radius:16px;border:1px solid var(--steel-soft);position:relative;overflow:hidden;
+  }
+  .lightbox-scene .model-cube{animation:lightbox-spin 9s linear infinite;}
+  @keyframes lightbox-spin{
+    0%,100%{transform:rotateX(-6deg) rotateY(-30deg);}
+    50%{transform:rotateX(-6deg) rotateY(30deg);}
+  }
+  .lightbox-caption{text-align:center;}
+  .lightbox-caption h3{font-size:20px;margin-bottom:6px;}
+  .lightbox-caption p{color:var(--text-mute);font-size:12.5px;}
+  .lightbox-close{
+    position:absolute;top:22px;right:24px;z-index:2;
+    width:40px;height:40px;border-radius:50%;
+    background:var(--panel);border:1px solid var(--steel-soft);color:var(--text);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .lightbox-close:hover{border-color:var(--text-mute);}
+  .lightbox-close svg{width:18px;height:18px;}
+  @media (max-width:600px){.lightbox-close{top:14px;right:14px;}}
   .spin-badge{
     position:absolute;bottom:-2px;right:6px;
     display:flex;align-items:center;gap:5px;
@@ -746,6 +784,20 @@
 
     </div>
   </section>
+
+  <!-- PHOTO LIGHTBOX -->
+  <div class="lightbox" id="photoLightbox" onclick="if(event.target===this) closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="lightbox-inner">
+      <div class="lightbox-scene" id="lightboxScene"></div>
+      <div class="lightbox-caption">
+        <h3 id="lightboxName"></h3>
+        <p id="lightboxSpecs" class="mono"></p>
+      </div>
+    </div>
+  </div>
 
   <!-- PROCESS -->
   <section id="process">
@@ -1171,6 +1223,34 @@
     scene._spinTimer = setTimeout(()=>{ scene.classList.remove('spinning'); }, 1500);
   }
 
+  function openLightbox(modelName){
+    const model = IPHONE_MODELS.find(m => m.name === modelName);
+    const photos = getModelPhotos();
+    const photo = photos[modelName];
+    if(!model || !photo) return;
+
+    const scene = document.getElementById('lightboxScene');
+    scene.innerHTML = `
+      <div class="model-cube" style="--w:220px;--h:${Math.round(220 * (model.top==='island'?2.04:2.0))}px;--d:16px;">
+        <div class="face front photo-face" style="background-image:url('${photo}')"></div>
+        <div class="face back photo-face" style="background-image:url('${photo}')"></div>
+        <div class="face edge-l"></div><div class="face edge-r"></div><div class="face edge-t"></div><div class="face edge-b"></div>
+      </div>`;
+    document.getElementById('lightboxName').textContent = model.name;
+    document.getElementById('lightboxSpecs').textContent = `${model.display} · ${model.chip} · ${model.camera}`;
+    document.getElementById('photoLightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(){
+    document.getElementById('photoLightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape') closeLightbox();
+  });
+
   const IPHONE_MODELS = [
     { group:"X Series", name:"iPhone X", colors:"Silver · Space Gray", display:"5.8″ Super Retina OLED", chip:"A11 Bionic", camera:"Dual 12MP", storage:"From 64GB", cams:2, top:"notch", body:"#3B3D42,#1C1D20" },
     { group:"X Series", name:"iPhone XR", colors:"White · Black · Blue · Yellow · Coral · Red", display:"6.1″ Liquid Retina LCD", chip:"A12 Bionic", camera:"Single 12MP", storage:"From 64GB", cams:1, top:"notch", body:"#3E6E9E,#1E3550" },
@@ -1233,11 +1313,12 @@
     const backFace = photo
       ? `<div class="face back photo-face" style="background-image:url('${photo}')"></div>`
       : `<div class="face back" style="--body-color:linear-gradient(155deg,${m.body});"><div class="cam-cluster">${lenses}</div></div>`;
-    const badgeLabel = photo ? 'Tap for 3D view' : 'Tap to spin';
+    const badgeLabel = photo ? 'Tap to enlarge' : 'Tap to spin';
+    const clickHandler = photo ? `openLightbox('${m.name.replace(/'/g,"\\'")}')` : 'spinModel(this)';
 
     return `
         <div class="model-card">
-          <div class="model-scene ${photo ? 'has-photo' : ''}" style="--w:${s.w}px;--h:${s.h}px;--d:${s.d}px;" onclick="spinModel(this)">
+          <div class="model-scene ${photo ? 'has-photo' : ''}" style="--w:${s.w}px;--h:${s.h}px;--d:${s.d}px;" onclick="${clickHandler}">
             <div class="model-cube">
               ${frontFace}
               ${backFace}
