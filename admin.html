@@ -257,10 +257,11 @@
         <div class="photos-intro">
           <h2 style="font-size:19px;margin-bottom:6px;">Upload real photos & 3D models per model</h2>
           <p style="color:var(--text-mute);font-size:13.5px;max-width:620px;">
-            Upload a photo for the tap-to-spin card, or a real <code>.glb</code> 3D model for a true drag-to-rotate view —
-            a 3D model always takes priority over a photo if both are set. Photos are auto-resized. <strong>3D models must
-            be under ~2.5MB</strong> (browser storage is limited without a real backend) — compress with Draco or reduce
-            texture size before uploading if your file is larger.
+            Upload a photo for the tap-to-spin card, a real <code>.glb</code>/<code>.gltf</code> 3D model for a true
+            drag-to-rotate view, or a short video. Priority when a card renders: <strong>3D model → video → photo →
+            illustration</strong>. Photos are auto-resized. <strong>3D models must be under ~2.5MB</strong> and
+            <strong>videos under ~3MB</strong> (browser storage is limited without a real backend) — compress before
+            uploading if your file is larger.
           </p>
         </div>
 
@@ -473,11 +474,30 @@
     localStorage.setItem(MODELS_3D_KEY, JSON.stringify(map));
   }
 
+  const VIDEOS_KEY = 'egyware_model_videos';
+  const MAX_VIDEO_BYTES = 3 * 1024 * 1024; // ~3MB safe ceiling for localStorage
+  function getModelVideos(){
+    try{ return JSON.parse(localStorage.getItem(VIDEOS_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function saveModelVideos(map){
+    localStorage.setItem(VIDEOS_KEY, JSON.stringify(map));
+  }
+
+  const SUPPORTED_3D_EXT = ['.glb', '.gltf'];
+  const UNSUPPORTED_3D_EXT = ['.obj', '.fbx', '.usdz', '.stl', '.dae', '.blend', '.3ds', '.max', '.c4d'];
+
   function handle3DUpload(event, modelName){
     const file = event.target.files[0];
     if(!file) return;
-    if(!file.name.toLowerCase().endsWith('.glb')){
-      alert('Please upload a .glb file (glTF binary) — that\'s the format browsers can display directly.');
+    const lower = file.name.toLowerCase();
+    const isSupported = SUPPORTED_3D_EXT.some(ext => lower.endsWith(ext));
+    if(!isSupported){
+      const isKnownButUnsupported = UNSUPPORTED_3D_EXT.some(ext => lower.endsWith(ext));
+      if(isKnownButUnsupported){
+        alert(`Browsers can't display ${file.name.split('.').pop().toUpperCase()} files directly — only .glb or .gltf. Convert it first (Blender's "Export glTF" option handles most formats), then upload the .glb here.`);
+      } else {
+        alert('Please upload a .glb or .gltf file — those are the 3D formats browsers can display directly.');
+      }
       event.target.value = '';
       return;
     }
@@ -499,6 +519,41 @@
     };
     reader.readAsDataURL(file);
     event.target.value = '';
+  }
+
+  function handleVideoUpload(event, modelName){
+    const file = event.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('video/')){
+      alert('Please choose a video file (MP4 or WebM work best in browsers).');
+      event.target.value = '';
+      return;
+    }
+    if(file.size > MAX_VIDEO_BYTES){
+      alert(`This video is ${(file.size/1024/1024).toFixed(1)}MB. Browser storage can only reliably hold files under ~3MB total across all models. Compress it first — e.g. HandBrake, or "ffmpeg -i in.mp4 -vf scale=480:-1 -crf 32 out.mp4" — then try again.`);
+      event.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e){
+      try{
+        const videos = getModelVideos();
+        videos[modelName] = e.target.result;
+        saveModelVideos(videos);
+        renderPhotoGrid();
+      }catch(err){
+        alert('Could not save this video — browser storage is likely full. Remove another upload first, or compress this one.');
+      }
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
+  }
+
+  function removeVideo(modelName){
+    const videos = getModelVideos();
+    delete videos[modelName];
+    saveModelVideos(videos);
+    renderPhotoGrid();
   }
 
   function remove3D(modelName){
@@ -551,18 +606,22 @@
     const search = (document.getElementById('photoSearch')?.value || '').toLowerCase();
     const photos = getModelPhotos();
     const models3d = getModel3D();
+    const videos = getModelVideos();
     const names = MODEL_NAMES.filter(n => n.toLowerCase().includes(search));
 
     grid.innerHTML = names.map((name, i)=>{
       const photo = photos[name];
       const model3d = models3d[name];
+      const video = videos[name];
       const inputId = 'phInput' + i;
       const inputId3d = 'd3Input' + i;
+      const inputIdVid = 'vidInput' + i;
       return `
         <div class="photo-card">
           <div class="ph-preview ${photo ? 'filled' : ''}" style="${photo ? `background-image:url('${photo}')` : ''}">
             ${photo ? '' : '<div class="ph-placeholder">No photo yet</div>'}
             ${model3d ? '<div class="ph-3d-badge">3D model active</div>' : ''}
+            ${video && !model3d ? '<div class="ph-3d-badge" style="right:auto;left:6px;">Video active</div>' : ''}
           </div>
           <div class="ph-name">${name}</div>
           <div class="ph-actions">
@@ -570,11 +629,16 @@
             ${photo ? `<button class="btn btn-danger" onclick="removePhoto('${name}')">Remove</button>` : ''}
           </div>
           <div class="ph-actions">
-            <button class="btn" onclick="document.getElementById('${inputId3d}').click()">${model3d ? 'Replace .glb' : 'Upload .glb'}</button>
+            <button class="btn" onclick="document.getElementById('${inputId3d}').click()">${model3d ? 'Replace 3D' : 'Upload 3D (.glb/.gltf)'}</button>
             ${model3d ? `<button class="btn btn-danger" onclick="remove3D('${name}')">Remove</button>` : ''}
           </div>
+          <div class="ph-actions">
+            <button class="btn" onclick="document.getElementById('${inputIdVid}').click()">${video ? 'Replace video' : 'Upload video'}</button>
+            ${video ? `<button class="btn btn-danger" onclick="removeVideo('${name}')">Remove</button>` : ''}
+          </div>
           <input type="file" accept="image/*" id="${inputId}" onchange="handlePhotoUpload(event, '${name}')">
-          <input type="file" accept=".glb" id="${inputId3d}" onchange="handle3DUpload(event, '${name}')">
+          <input type="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json" id="${inputId3d}" onchange="handle3DUpload(event, '${name}')">
+          <input type="file" accept="video/*" id="${inputIdVid}" onchange="handleVideoUpload(event, '${name}')">
         </div>`;
     }).join('');
   }

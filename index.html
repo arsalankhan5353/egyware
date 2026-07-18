@@ -464,6 +464,10 @@
     background:transparent;
   }
   model-viewer.real-3d.lightbox-3d{height:100%;}
+  .real-video{
+    width:100%;height:100%;object-fit:cover;cursor:zoom-in;border-radius:12px;
+  }
+  .real-video.lightbox-video{height:100%;border-radius:16px;cursor:default;}
   .model-scene::before{
     content:"";position:absolute;inset:0;
     background:radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08), transparent 40%);
@@ -1273,7 +1277,24 @@
     document.body.style.overflow = 'hidden';
   }
 
+  function openLightboxVideo(modelName){
+    const model = IPHONE_MODELS.find(m => m.name === modelName);
+    const videos = getModelVideos();
+    const src = videos[modelName];
+    if(!model || !src) return;
+
+    const scene = document.getElementById('lightboxScene');
+    scene.innerHTML = `<video class="real-video lightbox-video" src="${src}" controls autoplay loop playsinline></video>`;
+    document.getElementById('lightboxName').textContent = model.name;
+    document.getElementById('lightboxSpecs').textContent = `${model.display} · ${model.chip} · ${model.camera}`;
+    document.getElementById('photoLightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
   function closeLightbox(){
+    const scene = document.getElementById('lightboxScene');
+    const vid = scene.querySelector('video');
+    if(vid) vid.pause();
     document.getElementById('photoLightbox').classList.remove('open');
     document.body.style.overflow = '';
   }
@@ -1331,6 +1352,10 @@
   function getModel3D(){
     try{ return JSON.parse(localStorage.getItem(MODELS_3D_KEY)) || {}; }catch(e){ return {}; }
   }
+  const VIDEOS_KEY = 'egyware_model_videos';
+  function getModelVideos(){
+    try{ return JSON.parse(localStorage.getItem(VIDEOS_KEY)) || {}; }catch(e){ return {}; }
+  }
 
   function renderModelCard(m, sizeKey){
     const sizes = { sm:{w:104,h:212,d:12}, md:{w:110,h:224,d:13}, lg:{w:120,h:246,d:14} };
@@ -1344,6 +1369,8 @@
     const model3d = models3d[m.name];
     const photos = getModelPhotos();
     const photo = photos[m.name];
+    const videos = getModelVideos();
+    const video = videos[m.name];
 
     if(model3d){
       return `
@@ -1356,6 +1383,29 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg>
             </button>
             <div class="spin-badge">Drag to rotate</div>
+          </div>
+          <h4>${m.name}</h4>
+          <div class="model-colors">${m.colors}</div>
+          <div class="model-specs">
+            <div class="spec-row"><span class="k">Display</span><span class="v">${m.display}</span></div>
+            <div class="spec-row"><span class="k">Chip</span><span class="v">${m.chip}</span></div>
+            <div class="spec-row"><span class="k">Camera</span><span class="v">${m.camera}</span></div>
+            <div class="spec-row"><span class="k">Storage</span><span class="v">${m.storage}</span></div>
+          </div>
+          <div class="repair-note">Screen · Battery · Camera repair available</div>
+        </div>`;
+    }
+
+    if(video){
+      return `
+        <div class="model-card">
+          <div class="model-scene has-3d">
+            <video class="real-video" src="${video}" autoplay muted loop playsinline
+              onclick="openLightboxVideo('${m.name.replace(/'/g,"\\'")}')"></video>
+            <button class="expand-btn" onclick="openLightboxVideo('${m.name.replace(/'/g,"\\'")}')" aria-label="Enlarge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg>
+            </button>
+            <div class="spin-badge">Tap to enlarge</div>
           </div>
           <h4>${m.name}</h4>
           <div class="model-colors">${m.colors}</div>
