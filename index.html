@@ -7,36 +7,41 @@
 <meta name="description" content="Egyware Trading LLC — professional iPhone, Samsung, iPad & MacBook repair in Dubai. Same-day fixes, genuine parts, pick-up & delivery. Deira, Dubai.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <style>
   :root{
-    --ink:#0F1218;
-    --panel:#161B24;
-    --panel-2:#1D232F;
-    --steel:#2B3341;
-    --steel-soft:#232A36;
-    --signal:#4C8DFF;
-    --signal-dim:#2E4E8F;
-    --copper:#D98A4A;
-    --copper-soft:#3A2A1D;
-    --text:#EDEFF3;
-    --text-mute:#8C95A8;
-    --text-faint:#5C6577;
+    --ink:#0E2C24;
+    --panel:#153A30;
+    --panel-2:#1C473A;
+    --steel:#33574A;
+    --steel-soft:#264539;
+    --signal:#D4AF37;
+    --signal-dim:#6B5720;
+    --copper:#2FBF8F;
+    --copper-soft:#16302A;
+    --text:#F2F5F2;
+    --text-mute:#9AB0A5;
+    --text-faint:#5C7268;
     --ok:#4ADE9C;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{
-    background:var(--ink);
+    background:
+      radial-gradient(ellipse 1000px 650px at 12% -8%, rgba(212,175,55,0.14), transparent 60%),
+      radial-gradient(ellipse 1000px 750px at 100% 15%, rgba(47,191,143,0.16), transparent 55%),
+      radial-gradient(ellipse 900px 700px at 90% 100%, rgba(47,191,143,0.10), transparent 55%),
+      var(--ink);
+    background-attachment:fixed;
     color:var(--text);
-    font-family:'Inter',sans-serif;
+    font-family:'Plus Jakarta Sans',sans-serif;
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
-  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-0.01em;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
+  h1,h2,h3,h4{font-family:'Unbounded',sans-serif;font-weight:600;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
   a{color:inherit;text-decoration:none;}
   img,svg{display:block;max-width:100%;}
   .wrap{max-width:1160px;margin:0 auto;padding:0 24px;}
@@ -67,7 +72,7 @@
   }
   .logo{
     display:flex;align-items:center;gap:10px;
-    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;
+    font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;letter-spacing:-0.01em;
   }
   .logo .brand-mark{flex-shrink:0;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4));}
   .logo .dot{
@@ -76,7 +81,7 @@
     animation:pulse-dot 2.4s ease-in-out infinite;
   }
   @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.35;}}
-  .logo span.sub{color:var(--text-mute);font-weight:400;font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;margin-left:4px;}
+  .logo span.sub{color:var(--text-mute);font-weight:400;font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;margin-left:4px;}
   .nav-links{display:flex;gap:32px;font-size:14px;color:var(--text-mute);}
   .nav-links a:hover{color:var(--text);}
   .nav-cta{
@@ -110,7 +115,7 @@
   }
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
     color:var(--signal);border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);
     padding:6px 12px;border-radius:20px;margin-bottom:22px;
   }
@@ -149,7 +154,7 @@
   }
   .device-scan .ticket-id{
     align-self:flex-start;
-    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);
     margin-bottom:22px;letter-spacing:0.05em;
   }
   .phone-outline{
@@ -177,7 +182,7 @@
     100%{top:6%;opacity:0;}
   }
   .scan-status{
-    margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--signal);
+    margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--signal);
     display:flex;align-items:center;gap:8px;
   }
   .scan-status .blink{width:6px;height:6px;border-radius:50%;background:var(--ok);animation:pulse-dot 1.4s ease-in-out infinite;}
@@ -191,7 +196,7 @@
   section{padding:88px 0;}
   .section-head{max-width:600px;margin-bottom:52px;}
   .section-tag{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
     color:var(--copper);margin-bottom:12px;
   }
   .section-head h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:14px;}
@@ -224,7 +229,7 @@
     display:flex;align-items:center;justify-content:center;color:var(--signal);
   }
   .ticket-icon svg{width:22px;height:22px;}
-  .ticket-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);}
+  .ticket-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);}
   .ticket h3{font-size:18px;margin-bottom:10px;}
   .ticket ul{list-style:none;}
   .ticket li{
@@ -253,7 +258,7 @@
   }
   .process-step{position:relative;z-index:1;padding-right:16px;}
   .process-step .num{
-    font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);
+    font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--ink);
     width:44px;height:44px;border-radius:50%;background:var(--signal);
     display:flex;align-items:center;justify-content:center;font-weight:600;margin-bottom:18px;
   }
@@ -271,7 +276,7 @@
   .why-item{display:flex;gap:16px;}
   .why-item .mark{
     flex-shrink:0;width:34px;height:34px;border-radius:8px;background:var(--copper-soft);
-    color:var(--copper);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;
+    color:var(--copper);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
   }
   .why-item h4{font-size:16px;margin-bottom:5px;}
   .why-item p{font-size:14px;color:var(--text-mute);}
@@ -281,7 +286,7 @@
   .brand-panel .section-tag{margin-bottom:8px;}
   .brand-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
   .brand-pill{
-    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text-mute);
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--text-mute);
     border:1px solid var(--steel);padding:8px 14px;border-radius:20px;
   }
 
@@ -294,7 +299,7 @@
     background:var(--panel);border:1px solid var(--steel-soft);border-radius:12px;padding:30px;
   }
   .loc-card .loc-tag{
-    display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--signal);
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--signal);
     border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);padding:4px 10px;border-radius:14px;margin-bottom:16px;
   }
   .loc-card h3{font-size:19px;margin-bottom:10px;}
@@ -316,7 +321,7 @@
   .cta-band p{color:var(--text-mute);margin-bottom:30px;font-size:15.5px;}
   .cta-numbers{
     display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
-    font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--text-mute);margin-top:26px;
+    font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text-mute);margin-top:26px;
   }
   .cta-numbers span{color:var(--text);}
 
@@ -326,13 +331,13 @@
   .track-input-row{display:flex;gap:10px;flex-wrap:wrap;}
   .track-input-row input{
     flex:1;min-width:200px;background:var(--ink);border:1px solid var(--steel);border-radius:7px;
-    padding:12px 14px;color:var(--text);font-size:14px;font-family:'IBM Plex Mono',monospace;
+    padding:12px 14px;color:var(--text);font-size:14px;font-family:'JetBrains Mono',monospace;
   }
   .track-input-row input:focus{outline:none;border-color:var(--signal);}
   .track-empty{margin-top:20px;color:var(--text-mute);font-size:13.5px;text-align:center;}
   .track-result{margin-top:26px;padding-top:24px;border-top:1px solid var(--steel-soft);}
   .track-result .tr-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
-  .track-result .tr-head .tid{font-family:'IBM Plex Mono',monospace;color:var(--signal);font-size:15px;}
+  .track-result .tr-head .tid{font-family:'JetBrains Mono',monospace;color:var(--signal);font-size:15px;}
   .track-result .tr-head .tdate{font-size:12px;color:var(--text-faint);}
   .track-result .tr-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 20px;font-size:13.5px;margin-bottom:26px;}
   .track-result .tr-meta .k{color:var(--text-faint);}
@@ -348,7 +353,7 @@
   .status-track .st-node.done .st-dot{background:var(--signal);border-color:var(--signal);}
   .status-track .st-node.done .st-dot svg{width:12px;height:12px;color:#fff;}
   .status-track .st-node.current .st-dot{border-color:var(--signal);box-shadow:0 0 0 4px rgba(76,141,255,0.15);}
-  .status-track .st-label{font-size:11.5px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;}
+  .status-track .st-label{font-size:11.5px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
   .status-track .st-node.done .st-label, .status-track .st-node.current .st-label{color:var(--text);}
   @media (max-width:520px){.tr-meta{grid-template-columns:1fr;}.status-track .st-label{font-size:10px;}}
 
@@ -361,7 +366,7 @@
   .form-field label{display:block;font-size:13px;color:var(--text-mute);margin-bottom:7px;}
   .form-field input, .form-field select, .form-field textarea{
     width:100%;background:var(--ink);border:1px solid var(--steel);border-radius:7px;
-    padding:11px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;
+    padding:11px 13px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;
   }
   .form-field input:focus, .form-field select:focus, .form-field textarea:focus{
     outline:none;border-color:var(--signal);
@@ -377,7 +382,7 @@
   }
   .faq-q{
     width:100%;text-align:left;background:none;border:none;color:var(--text);
-    font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:500;
+    font-family:'Unbounded',sans-serif;font-size:16px;font-weight:500;
     padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:16px;cursor:pointer;
   }
   .faq-q .plus{
@@ -401,7 +406,7 @@
     display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;margin-bottom:44px;
   }
   .footer-col h5{
-    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-faint);
     letter-spacing:0.06em;text-transform:uppercase;margin-bottom:16px;
   }
   .footer-col p, .footer-col a{font-size:14px;color:var(--text-mute);display:block;margin-bottom:10px;}
@@ -428,13 +433,13 @@
     grid-column:1 / -1;
     display:flex;align-items:center;gap:12px;
     margin:8px 0 -2px;
-    font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:0.1em;text-transform:uppercase;
     color:var(--text-faint);
   }
   .group-label::after{content:"";flex:1;height:1px;background:var(--steel-soft);}
   .group-label:first-child{margin-top:0;}
 
-  .models-scroll-hint{font-size:12.5px;color:var(--text-faint);margin-top:-30px;margin-bottom:34px;font-family:'IBM Plex Mono',monospace;}
+  .models-scroll-hint{font-size:12.5px;color:var(--text-faint);margin-top:-30px;margin-bottom:34px;font-family:'JetBrains Mono',monospace;}
   .models-grid{
     display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
   }
@@ -529,7 +534,7 @@
   .cam-cluster{position:absolute;top:7%;left:7%;width:38%;height:26%;display:flex;flex-wrap:wrap;gap:5%;align-content:flex-start;background:radial-gradient(circle at 35% 30%, rgba(0,0,0,0.35), transparent 70%);border-radius:22%;padding:4%;}
   .cam-cluster .lens{
     width:42%;aspect-ratio:1;border-radius:50%;position:relative;
-    background:radial-gradient(circle at 32% 28%, #6FA3FF 0%, #14202F 45%, #060A10 100%);
+    background:radial-gradient(circle at 32% 28%, #E8C468 0%, #2A2413 45%, #0A0906 100%);
     border:2px solid rgba(0,0,0,0.6);
     box-shadow:0 0 0 1px rgba(255,255,255,0.10), inset 0 0 6px rgba(0,0,0,0.6);
   }
@@ -586,12 +591,12 @@
   .spin-badge{
     position:absolute;bottom:-2px;right:6px;
     display:flex;align-items:center;gap:5px;
-    font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--text-faint);
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-faint);
     background:var(--panel-2);border:1px solid var(--steel-soft);padding:4px 9px;border-radius:12px;
   }
   .spin-badge svg{width:11px;height:11px;}
   .model-card h4{font-size:16.5px;margin-bottom:4px;}
-  .model-card .model-colors{font-size:11.5px;color:var(--text-faint);margin-bottom:16px;font-family:'IBM Plex Mono',monospace;}
+  .model-card .model-colors{font-size:11.5px;color:var(--text-faint);margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
   .model-specs{width:100%;display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
   .model-specs .spec-row{display:flex;justify-content:space-between;font-size:12.5px;border-bottom:1px dashed var(--steel-soft);padding-bottom:9px;}
   .model-specs .spec-row .k{color:var(--text-faint);}
@@ -632,7 +637,7 @@
       <a href="#top" class="logo">
         <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true" class="brand-mark">
             <defs>
-              <linearGradient id="navLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#6FA3FF"/><stop offset="1" stop-color="#12192B"/></linearGradient>
+              <linearGradient id="navLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#E8C468"/><stop offset="1" stop-color="#16130A"/></linearGradient>
               <linearGradient id="navLogoGlow" x1="0" y1="0" x2="48" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity="0.32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
             </defs>
             <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#navLogoGrad)"/>
@@ -643,7 +648,7 @@
               <path d="M14 34.5h20"/>
             </g>
             <rect x="1.5" y="1.5" width="45" height="45" rx="12.5" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-            <circle cx="38.5" cy="10" r="2.6" fill="#D98A4A"/>
+            <circle cx="38.5" cy="10" r="2.6" fill="#2FBF8F"/>
           </svg>
         EGYWARE <span class="sub">TRADING LLC</span>
       </a>
@@ -1096,7 +1101,7 @@
         <a href="#top" class="logo" style="margin-bottom:14px;">
           <svg viewBox="0 0 48 48" width="32" height="32" aria-hidden="true" class="brand-mark">
             <defs>
-              <linearGradient id="footLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#6FA3FF"/><stop offset="1" stop-color="#12192B"/></linearGradient>
+              <linearGradient id="footLogoGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop stop-color="#E8C468"/><stop offset="1" stop-color="#16130A"/></linearGradient>
               <linearGradient id="footLogoGlow" x1="0" y1="0" x2="48" y2="26" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity="0.32"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
             </defs>
             <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#footLogoGrad)"/>
@@ -1107,7 +1112,7 @@
               <path d="M14 34.5h20"/>
             </g>
             <rect x="1.5" y="1.5" width="45" height="45" rx="12.5" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>
-            <circle cx="38.5" cy="10" r="2.6" fill="#D98A4A"/>
+            <circle cx="38.5" cy="10" r="2.6" fill="#2FBF8F"/>
           </svg>
           EGYWARE <span class="sub">TRADING LLC</span>
         </a>
