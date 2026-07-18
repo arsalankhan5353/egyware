@@ -1242,17 +1242,17 @@
     scene._spinTimer = setTimeout(()=>{ scene.classList.remove('spinning'); }, 1500);
   }
 
-  function openLightbox(modelName){
+  async function openLightbox(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const photos = getModelPhotos();
-    const photo = photos[modelName];
-    if(!model || !photo) return;
+    const rec = await idbGet('photo:' + modelName);
+    if(!model || !rec) return;
+    const url = URL.createObjectURL(rec.blob);
 
     const scene = document.getElementById('lightboxScene');
     scene.innerHTML = `
       <div class="model-cube" style="--w:220px;--h:${Math.round(220 * (model.top==='island'?2.04:2.0))}px;--d:16px;">
-        <div class="face front photo-face" style="background-image:url('${photo}')"></div>
-        <div class="face back photo-face" style="background-image:url('${photo}')"></div>
+        <div class="face front photo-face" style="background-image:url('${url}')"></div>
+        <div class="face back photo-face" style="background-image:url('${url}')"></div>
         <div class="face edge-l"></div><div class="face edge-r"></div><div class="face edge-t"></div><div class="face edge-b"></div>
       </div>`;
     document.getElementById('lightboxName').textContent = model.name;
@@ -1261,14 +1261,14 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function openLightbox3D(modelName){
+  async function openLightbox3D(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const models3d = getModel3D();
-    const src = models3d[modelName];
-    if(!model || !src) return;
+    const rec = await idbGet('3d:' + modelName);
+    if(!model || !rec) return;
+    const url = URL.createObjectURL(rec.blob);
 
     const scene = document.getElementById('lightboxScene');
-    scene.innerHTML = `<model-viewer class="real-3d lightbox-3d" src="${src}" camera-controls auto-rotate
+    scene.innerHTML = `<model-viewer class="real-3d lightbox-3d" src="${url}" camera-controls auto-rotate
       auto-rotate-delay="0" rotation-per-second="14deg" shadow-intensity="0.9" exposure="0.9"
       interaction-prompt="none" touch-action="pan-y"></model-viewer>`;
     document.getElementById('lightboxName').textContent = model.name;
@@ -1277,14 +1277,14 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function openLightboxVideo(modelName){
+  async function openLightboxVideo(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const videos = getModelVideos();
-    const src = videos[modelName];
-    if(!model || !src) return;
+    const rec = await idbGet('video:' + modelName);
+    if(!model || !rec) return;
+    const url = URL.createObjectURL(rec.blob);
 
     const scene = document.getElementById('lightboxScene');
-    scene.innerHTML = `<video class="real-video lightbox-video" src="${src}" controls autoplay loop playsinline></video>`;
+    scene.innerHTML = `<video class="real-video lightbox-video" src="${url}" controls autoplay loop playsinline></video>`;
     document.getElementById('lightboxName').textContent = model.name;
     document.getElementById('lightboxSpecs').textContent = `${model.display} · ${model.chip} · ${model.camera}`;
     document.getElementById('photoLightbox').classList.add('open');
@@ -1344,20 +1344,28 @@
     { group:"17 Series", name:"iPhone 17 Pro Max", colors:"Cosmic Orange · Silver · Deep Blue", display:"6.9″ Dynamic Island ProMotion", chip:"A19 Pro", camera:"Triple 48MP, 8x zoom", storage:"From 256GB", cams:3, top:"island", body:"#4A3A2E,#2A2019" },
   ];
 
-  const PHOTOS_KEY = 'egyware_model_photos';
-  function getModelPhotos(){
-    try{ return JSON.parse(localStorage.getItem(PHOTOS_KEY)) || {}; }catch(e){ return {}; }
+  /* ---------- media storage: IndexedDB (large quota, stores raw Blobs) ---------- */
+  const IDB_NAME = 'egyware_media';
+  const IDB_STORE = 'assets';
+  function idbOpen(){
+    return new Promise((resolve, reject)=>{
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE, {keyPath:'id'}); };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror = ()=> reject(req.error);
+    });
   }
-  const MODELS_3D_KEY = 'egyware_model_3d';
-  function getModel3D(){
-    try{ return JSON.parse(localStorage.getItem(MODELS_3D_KEY)) || {}; }catch(e){ return {}; }
-  }
-  const VIDEOS_KEY = 'egyware_model_videos';
-  function getModelVideos(){
-    try{ return JSON.parse(localStorage.getItem(VIDEOS_KEY)) || {}; }catch(e){ return {}; }
+  async function idbGet(id){
+    const db = await idbOpen();
+    return new Promise((resolve, reject)=>{
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(id);
+      req.onsuccess = ()=> resolve(req.result || null);
+      req.onerror = ()=> reject(req.error);
+    });
   }
 
-  function renderModelCard(m, sizeKey){
+  async function renderModelCard(m, sizeKey){
     const sizes = { sm:{w:104,h:212,d:12}, md:{w:110,h:224,d:13}, lg:{w:120,h:246,d:14} };
     const s = sizes[sizeKey] || sizes.md;
     const topEl = m.top === "island" ? '<div class="island"></div>' : '<div class="notch"></div>';
@@ -1365,12 +1373,12 @@
     let lenses = "";
     for(let i=0;i<lensCount;i++){ lenses += '<div class="lens"></div>'; }
 
-    const models3d = getModel3D();
-    const model3d = models3d[m.name];
-    const photos = getModelPhotos();
-    const photo = photos[m.name];
-    const videos = getModelVideos();
-    const video = videos[m.name];
+    const model3dRec = await idbGet('3d:' + m.name);
+    const videoRec = await idbGet('video:' + m.name);
+    const photoRec = await idbGet('photo:' + m.name);
+    const model3d = model3dRec ? URL.createObjectURL(model3dRec.blob) : null;
+    const video = videoRec ? URL.createObjectURL(videoRec.blob) : null;
+    const photo = photoRec ? URL.createObjectURL(photoRec.blob) : null;
 
     if(model3d){
       return `
@@ -1450,18 +1458,19 @@
         </div>`;
   }
 
-  (function initModelsGrid(){
+  async function initModelsGrid(){
     const grid = document.getElementById('modelsGrid');
     if(!grid) return;
-    let html = "";
     let lastGroup = null;
-    IPHONE_MODELS.forEach(m=>{
+    const parts = [];
+    for(const m of IPHONE_MODELS){
       if(m.group !== lastGroup){
-        html += `<div class="group-label">${m.group}</div>`;
+        parts.push(`<div class="group-label">${m.group}</div>`);
         lastGroup = m.group;
       }
-      html += renderModelCard(m, 'md');
-    });
+      parts.push(await renderModelCard(m, 'md'));
+    }
+    let html = parts.join('');
     html += `
         <div class="model-card" style="justify-content:center;">
           <div style="text-align:center;padding:40px 8px;">
@@ -1472,7 +1481,8 @@
           </div>
         </div>`;
     grid.innerHTML = html;
-  })();
+  }
+  initModelsGrid();
 
   document.querySelectorAll('.faq-item').forEach(item=>{
     item.querySelector('.faq-q').addEventListener('click',()=>{

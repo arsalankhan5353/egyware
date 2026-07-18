@@ -154,6 +154,9 @@
     background:rgba(76,141,255,0.15);color:var(--signal);border:1px solid var(--signal-dim);
     padding:3px 7px;border-radius:10px;
   }
+  .storage-bar{width:100%;max-width:420px;height:8px;border-radius:5px;background:var(--panel-2);border:1px solid var(--steel-soft);overflow:hidden;}
+  .storage-fill{height:100%;background:linear-gradient(90deg,var(--signal),var(--copper));border-radius:5px;transition:width 0.3s ease;}
+  .storage-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-faint);margin-top:6px;}
   .photo-card .ph-name{font-size:13px;font-weight:600;}
   .photo-card .ph-actions{display:flex;gap:8px;}
   .photo-card .ph-actions .btn{flex:1;justify-content:center;padding:8px;font-size:12px;}
@@ -259,10 +262,11 @@
           <p style="color:var(--text-mute);font-size:13.5px;max-width:620px;">
             Upload a photo for the tap-to-spin card, a real <code>.glb</code>/<code>.gltf</code> 3D model for a true
             drag-to-rotate view, or a short video. Priority when a card renders: <strong>3D model → video → photo →
-            illustration</strong>. Photos are auto-resized. <strong>3D models must be under ~2.5MB</strong> and
-            <strong>videos under ~3MB</strong> (browser storage is limited without a real backend) — compress before
-            uploading if your file is larger.
+            illustration</strong>. Photos are auto-resized. Files are stored in this browser's IndexedDB — much more
+            room than before (3D up to 40MB, video up to 60MB), but still local to this device until a real backend
+            is connected.
           </p>
+          <div id="storageMeter" style="margin-top:14px;"></div>
         </div>
 
         <div class="toolbar" style="margin-top:20px;">
@@ -270,8 +274,8 @@
             <input type="text" id="photoSearch" placeholder="Search model name…" oninput="renderPhotoGrid()">
           </div>
           <div style="display:flex;gap:10px;">
-            <button class="btn" onclick="document.getElementById('importPhotosFile').click()">Import photos</button>
-            <button class="btn" onclick="exportPhotos()">Export photos</button>
+            <button class="btn" onclick="document.getElementById('importPhotosFile').click()">Import backup</button>
+            <button class="btn" onclick="exportPhotos()">Export backup</button>
             <input type="file" id="importPhotosFile" accept=".json" onchange="importPhotos(event)">
           </div>
         </div>
@@ -445,8 +449,7 @@
     reader.readAsText(file);
   }
 
-  /* ---------- model photos ---------- */
-  const PHOTOS_KEY = 'egyware_model_photos';
+  /* ---------- model photos / 3D / video: IndexedDB (large quota, raw Blob storage) ---------- */
   const MODEL_NAMES = [
     "iPhone X","iPhone XR","iPhone XS","iPhone XS Max",
     "iPhone 11","iPhone 11 Pro","iPhone 11 Pro Max",
@@ -458,35 +461,60 @@
     "iPhone 17","iPhone 17 Air","iPhone 17 Pro","iPhone 17 Pro Max"
   ];
 
-  function getModelPhotos(){
-    try{ return JSON.parse(localStorage.getItem(PHOTOS_KEY)) || {}; }catch(e){ return {}; }
+  const IDB_NAME = 'egyware_media';
+  const IDB_STORE = 'assets';
+  function idbOpen(){
+    return new Promise((resolve, reject)=>{
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE, {keyPath:'id'}); };
+      req.onsuccess = ()=> resolve(req.result);
+      req.onerror = ()=> reject(req.error);
+    });
   }
-  function saveModelPhotos(map){
-    localStorage.setItem(PHOTOS_KEY, JSON.stringify(map));
+  async function idbSet(id, blob, mime, name){
+    const db = await idbOpen();
+    return new Promise((resolve, reject)=>{
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put({id, blob, mime, name, savedAt: Date.now()});
+      tx.oncomplete = ()=> resolve(true);
+      tx.onerror = ()=> reject(tx.error);
+    });
+  }
+  async function idbGet(id){
+    const db = await idbOpen();
+    return new Promise((resolve, reject)=>{
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(id);
+      req.onsuccess = ()=> resolve(req.result || null);
+      req.onerror = ()=> reject(req.error);
+    });
+  }
+  async function idbDelete(id){
+    const db = await idbOpen();
+    return new Promise((resolve, reject)=>{
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(id);
+      tx.oncomplete = ()=> resolve(true);
+      tx.onerror = ()=> reject(tx.error);
+    });
+  }
+  async function idbGetAll(){
+    const db = await idbOpen();
+    return new Promise((resolve, reject)=>{
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).getAll();
+      req.onsuccess = ()=> resolve(req.result || []);
+      req.onerror = ()=> reject(req.error);
+    });
   }
 
-  const MODELS_3D_KEY = 'egyware_model_3d';
-  const MAX_3D_BYTES = 2.5 * 1024 * 1024; // ~2.5MB safe ceiling for localStorage
-  function getModel3D(){
-    try{ return JSON.parse(localStorage.getItem(MODELS_3D_KEY)) || {}; }catch(e){ return {}; }
-  }
-  function saveModel3D(map){
-    localStorage.setItem(MODELS_3D_KEY, JSON.stringify(map));
-  }
-
-  const VIDEOS_KEY = 'egyware_model_videos';
-  const MAX_VIDEO_BYTES = 3 * 1024 * 1024; // ~3MB safe ceiling for localStorage
-  function getModelVideos(){
-    try{ return JSON.parse(localStorage.getItem(VIDEOS_KEY)) || {}; }catch(e){ return {}; }
-  }
-  function saveModelVideos(map){
-    localStorage.setItem(VIDEOS_KEY, JSON.stringify(map));
-  }
-
+  // IndexedDB quota is typically hundreds of MB+, so limits are far more generous than localStorage days.
+  const MAX_3D_BYTES = 40 * 1024 * 1024;    // 40MB per 3D model
+  const MAX_VIDEO_BYTES = 60 * 1024 * 1024; // 60MB per video
   const SUPPORTED_3D_EXT = ['.glb', '.gltf'];
   const UNSUPPORTED_3D_EXT = ['.obj', '.fbx', '.usdz', '.stl', '.dae', '.blend', '.3ds', '.max', '.c4d'];
 
-  function handle3DUpload(event, modelName){
+  async function handle3DUpload(event, modelName){
     const file = event.target.files[0];
     if(!file) return;
     const lower = file.name.toLowerCase();
@@ -502,26 +530,20 @@
       return;
     }
     if(file.size > MAX_3D_BYTES){
-      alert(`This file is ${(file.size/1024/1024).toFixed(1)}MB. Browser storage can only reliably hold files under ~2.5MB total across all models. Compress the model (e.g. via gltf-transform or Blender's glTF export with Draco compression) and try again — otherwise it may fail to save or break other uploads.`);
+      alert(`This file is ${(file.size/1024/1024).toFixed(1)}MB, over the ${(MAX_3D_BYTES/1024/1024)|0}MB cap. Compress it (gltf-transform, or Blender's glTF export with Draco compression) and try again.`);
       event.target.value = '';
       return;
     }
-    const reader = new FileReader();
-    reader.onload = function(e){
-      try{
-        const models3d = getModel3D();
-        models3d[modelName] = e.target.result;
-        saveModel3D(models3d);
-        renderPhotoGrid();
-      }catch(err){
-        alert('Could not save this file — browser storage is likely full. Remove another 3D model first, or compress this one.');
-      }
-    };
-    reader.readAsDataURL(file);
+    try{
+      await idbSet('3d:' + modelName, file, file.type, file.name);
+      renderPhotoGrid();
+    }catch(err){
+      alert('Could not save this file: ' + (err?.message || 'storage error') + '. You may be out of disk space — free some up and try again.');
+    }
     event.target.value = '';
   }
 
-  function handleVideoUpload(event, modelName){
+  async function handleVideoUpload(event, modelName){
     const file = event.target.files[0];
     if(!file) return;
     if(!file.type.startsWith('video/')){
@@ -530,36 +552,26 @@
       return;
     }
     if(file.size > MAX_VIDEO_BYTES){
-      alert(`This video is ${(file.size/1024/1024).toFixed(1)}MB. Browser storage can only reliably hold files under ~3MB total across all models. Compress it first — e.g. HandBrake, or "ffmpeg -i in.mp4 -vf scale=480:-1 -crf 32 out.mp4" — then try again.`);
+      alert(`This video is ${(file.size/1024/1024).toFixed(1)}MB, over the ${(MAX_VIDEO_BYTES/1024/1024)|0}MB cap. Compress it first — e.g. HandBrake, or "ffmpeg -i in.mp4 -vf scale=720:-1 -crf 28 out.mp4" — then try again.`);
       event.target.value = '';
       return;
     }
-    const reader = new FileReader();
-    reader.onload = function(e){
-      try{
-        const videos = getModelVideos();
-        videos[modelName] = e.target.result;
-        saveModelVideos(videos);
-        renderPhotoGrid();
-      }catch(err){
-        alert('Could not save this video — browser storage is likely full. Remove another upload first, or compress this one.');
-      }
-    };
-    reader.readAsDataURL(file);
+    try{
+      await idbSet('video:' + modelName, file, file.type, file.name);
+      renderPhotoGrid();
+    }catch(err){
+      alert('Could not save this video: ' + (err?.message || 'storage error') + '. You may be out of disk space — free some up and try again.');
+    }
     event.target.value = '';
   }
 
-  function removeVideo(modelName){
-    const videos = getModelVideos();
-    delete videos[modelName];
-    saveModelVideos(videos);
+  async function removeVideo(modelName){
+    await idbDelete('video:' + modelName);
     renderPhotoGrid();
   }
 
-  function remove3D(modelName){
-    const models3d = getModel3D();
-    delete models3d[modelName];
-    saveModel3D(models3d);
+  async function remove3D(modelName){
+    await idbDelete('3d:' + modelName);
     renderPhotoGrid();
   }
 
@@ -574,100 +586,140 @@
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        callback(canvas.toDataURL('image/jpeg', 0.82));
+        canvas.toBlob(blob=> callback(blob), 'image/jpeg', 0.85);
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
   }
 
-  function handlePhotoUpload(event, modelName){
+  async function handlePhotoUpload(event, modelName){
     const file = event.target.files[0];
     if(!file) return;
-    resizeImage(file, 700, function(dataUrl){
-      const photos = getModelPhotos();
-      photos[modelName] = dataUrl;
-      saveModelPhotos(photos);
-      renderPhotoGrid();
+    resizeImage(file, 900, async function(blob){
+      try{
+        await idbSet('photo:' + modelName, blob, 'image/jpeg', file.name);
+        renderPhotoGrid();
+      }catch(err){
+        alert('Could not save this photo: ' + (err?.message || 'storage error'));
+      }
     });
     event.target.value = '';
   }
 
-  function removePhoto(modelName){
-    const photos = getModelPhotos();
-    delete photos[modelName];
-    saveModelPhotos(photos);
+  async function removePhoto(modelName){
+    await idbDelete('photo:' + modelName);
     renderPhotoGrid();
   }
 
-  function renderPhotoGrid(){
+  async function updateStorageMeter(){
+    const el = document.getElementById('storageMeter');
+    if(!el) return;
+    if(navigator.storage && navigator.storage.estimate){
+      try{
+        const {usage, quota} = await navigator.storage.estimate();
+        const usedMB = (usage/1024/1024).toFixed(1);
+        const quotaMB = (quota/1024/1024).toFixed(0);
+        const pct = quota ? Math.min(100, (usage/quota)*100) : 0;
+        el.innerHTML = `<div class="storage-bar"><div class="storage-fill" style="width:${pct}%"></div></div>
+          <div class="storage-label">${usedMB}MB used of ~${quotaMB}MB available on this device/browser</div>`;
+      }catch(e){
+        el.innerHTML = '';
+      }
+    }
+  }
+
+  async function renderPhotoGrid(){
     const grid = document.getElementById('photoGrid');
     if(!grid) return;
     const search = (document.getElementById('photoSearch')?.value || '').toLowerCase();
-    const photos = getModelPhotos();
-    const models3d = getModel3D();
-    const videos = getModelVideos();
+    const allRecords = await idbGetAll();
+    const byId = {};
+    allRecords.forEach(r=> byId[r.id] = r);
     const names = MODEL_NAMES.filter(n => n.toLowerCase().includes(search));
 
     grid.innerHTML = names.map((name, i)=>{
-      const photo = photos[name];
-      const model3d = models3d[name];
-      const video = videos[name];
+      const photoRec = byId['photo:' + name];
+      const model3dRec = byId['3d:' + name];
+      const videoRec = byId['video:' + name];
+      const photoUrl = photoRec ? URL.createObjectURL(photoRec.blob) : null;
       const inputId = 'phInput' + i;
       const inputId3d = 'd3Input' + i;
       const inputIdVid = 'vidInput' + i;
       return `
         <div class="photo-card">
-          <div class="ph-preview ${photo ? 'filled' : ''}" style="${photo ? `background-image:url('${photo}')` : ''}">
-            ${photo ? '' : '<div class="ph-placeholder">No photo yet</div>'}
-            ${model3d ? '<div class="ph-3d-badge">3D model active</div>' : ''}
-            ${video && !model3d ? '<div class="ph-3d-badge" style="right:auto;left:6px;">Video active</div>' : ''}
+          <div class="ph-preview ${photoUrl ? 'filled' : ''}" style="${photoUrl ? `background-image:url('${photoUrl}')` : ''}">
+            ${photoUrl ? '' : '<div class="ph-placeholder">No photo yet</div>'}
+            ${model3dRec ? '<div class="ph-3d-badge">3D model active</div>' : ''}
+            ${videoRec && !model3dRec ? '<div class="ph-3d-badge" style="right:auto;left:6px;">Video active</div>' : ''}
           </div>
           <div class="ph-name">${name}</div>
           <div class="ph-actions">
-            <button class="btn" onclick="document.getElementById('${inputId}').click()">${photo ? 'Replace photo' : 'Upload photo'}</button>
-            ${photo ? `<button class="btn btn-danger" onclick="removePhoto('${name}')">Remove</button>` : ''}
+            <button class="btn" onclick="document.getElementById('${inputId}').click()">${photoRec ? 'Replace photo' : 'Upload photo'}</button>
+            ${photoRec ? `<button class="btn btn-danger" onclick="removePhoto('${name}')">Remove</button>` : ''}
           </div>
           <div class="ph-actions">
-            <button class="btn" onclick="document.getElementById('${inputId3d}').click()">${model3d ? 'Replace 3D' : 'Upload 3D (.glb/.gltf)'}</button>
-            ${model3d ? `<button class="btn btn-danger" onclick="remove3D('${name}')">Remove</button>` : ''}
+            <button class="btn" onclick="document.getElementById('${inputId3d}').click()">${model3dRec ? 'Replace 3D' : 'Upload 3D (.glb/.gltf)'}</button>
+            ${model3dRec ? `<button class="btn btn-danger" onclick="remove3D('${name}')">Remove</button>` : ''}
           </div>
           <div class="ph-actions">
-            <button class="btn" onclick="document.getElementById('${inputIdVid}').click()">${video ? 'Replace video' : 'Upload video'}</button>
-            ${video ? `<button class="btn btn-danger" onclick="removeVideo('${name}')">Remove</button>` : ''}
+            <button class="btn" onclick="document.getElementById('${inputIdVid}').click()">${videoRec ? 'Replace video' : 'Upload video'}</button>
+            ${videoRec ? `<button class="btn btn-danger" onclick="removeVideo('${name}')">Remove</button>` : ''}
           </div>
           <input type="file" accept="image/*" id="${inputId}" onchange="handlePhotoUpload(event, '${name}')">
           <input type="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json" id="${inputId3d}" onchange="handle3DUpload(event, '${name}')">
           <input type="file" accept="video/*" id="${inputIdVid}" onchange="handleVideoUpload(event, '${name}')">
         </div>`;
     }).join('');
+
+    updateStorageMeter();
   }
 
-  function exportPhotos(){
-    const photos = getModelPhotos();
-    const blob = new Blob([JSON.stringify(photos, null, 2)], {type:'application/json'});
+  function blobToBase64(blob){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = ()=> resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+  function base64ToBlob(dataUrl){
+    return fetch(dataUrl).then(r => r.blob());
+  }
+
+  async function exportPhotos(){
+    const all = await idbGetAll();
+    const out = {};
+    for(const rec of all){
+      out[rec.id] = { data: await blobToBase64(rec.blob), mime: rec.mime, name: rec.name };
+    }
+    const blob = new Blob([JSON.stringify(out)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `egyware-model-photos-${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `egyware-media-${new Date().toISOString().slice(0,10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
 
-  function importPhotos(event){
+  async function importPhotos(event){
     const file = event.target.files[0];
     if(!file) return;
     const reader = new FileReader();
-    reader.onload = function(e){
+    reader.onload = async function(e){
       try{
         const imported = JSON.parse(e.target.result);
-        const existing = getModelPhotos();
-        const merged = Object.assign({}, existing, imported);
-        saveModelPhotos(merged);
+        let count = 0;
+        for(const id of Object.keys(imported)){
+          const entry = imported[id];
+          const blob = await base64ToBlob(entry.data);
+          await idbSet(id, blob, entry.mime, entry.name);
+          count++;
+        }
         renderPhotoGrid();
-        alert('Photos imported.');
+        alert(`Imported ${count} item(s).`);
       }catch(err){
-        alert('Could not read that file — make sure it\'s an Egyware photos backup JSON.');
+        alert('Could not read that file — make sure it\'s an Egyware media backup JSON.');
       }
       event.target.value = '';
     };
