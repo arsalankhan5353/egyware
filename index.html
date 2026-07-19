@@ -11,28 +11,27 @@
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 <style>
   :root{
-    --ink:#0E2C24;
-    --panel:#153A30;
-    --panel-2:#1C473A;
-    --steel:#33574A;
-    --steel-soft:#264539;
-    --signal:#D4AF37;
-    --signal-dim:#6B5720;
-    --copper:#2FBF8F;
-    --copper-soft:#16302A;
-    --text:#F2F5F2;
-    --text-mute:#9AB0A5;
-    --text-faint:#5C7268;
+    --ink:#E9F5FD;
+    --panel:#FFFFFF;
+    --panel-2:#F1FAFF;
+    --steel:#BFE0F2;
+    --steel-soft:#D9EEFB;
+    --signal:#1F9BE0;
+    --signal-dim:#A9DAF2;
+    --copper:#0B5FA5;
+    --copper-soft:#DCEEFB;
+    --text:#0F2A3D;
+    --text-mute:#4F7288;
+    --text-faint:#7FA0B4;
     --ok:#4ADE9C;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{
     background:
-      radial-gradient(ellipse 1000px 650px at 12% -8%, rgba(212,175,55,0.14), transparent 60%),
-      radial-gradient(ellipse 1000px 750px at 100% 15%, rgba(47,191,143,0.16), transparent 55%),
-      radial-gradient(ellipse 900px 700px at 90% 100%, rgba(47,191,143,0.10), transparent 55%),
-      var(--ink);
+      radial-gradient(ellipse 1100px 700px at 15% -10%, rgba(31,155,224,0.16), transparent 60%),
+      radial-gradient(ellipse 1100px 800px at 100% 10%, rgba(11,95,165,0.10), transparent 55%),
+      linear-gradient(180deg, #F3FAFF 0%, #E4F3FC 45%, #D6ECFA 100%);
     background-attachment:fixed;
     color:var(--text);
     font-family:'Plus Jakarta Sans',sans-serif;
@@ -62,9 +61,10 @@
   /* ---------- nav ---------- */
   header{
     position:sticky;top:0;z-index:50;
-    background:rgba(15,18,24,0.86);
+    background:rgba(255,255,255,0.88);
     backdrop-filter:blur(10px);
     border-bottom:1px solid var(--steel-soft);
+    box-shadow:0 1px 0 rgba(11,95,165,0.04);
   }
   nav{
     display:flex;align-items:center;justify-content:space-between;
@@ -104,19 +104,29 @@
     padding:96px 0 80px;
     border-bottom:1px solid var(--steel-soft);
     overflow:hidden;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% 100%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 85% 90%, rgba(255,255,255,0.4), transparent 60%),
+      radial-gradient(ellipse 600px 350px at 60% 5%, rgba(255,255,255,0.45), transparent 55%),
+      linear-gradient(180deg, #EAF6FF 0%, #D3ECFB 55%, #BFE2F7 100%);
   }
   .hero::before{
     content:"";position:absolute;top:-200px;right:-160px;width:520px;height:520px;
-    background:radial-gradient(circle, rgba(76,141,255,0.16), transparent 68%);
+    background:radial-gradient(circle, rgba(31,155,224,0.16), transparent 68%);
     pointer-events:none;
   }
+  .hero-skyline{
+    position:absolute;left:0;right:0;bottom:0;height:120px;
+    pointer-events:none;opacity:0.5;
+  }
   .hero-grid{
+    position:relative;z-index:1;
     display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:center;
   }
   .eyebrow{
     display:inline-flex;align-items:center;gap:8px;
     font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;
-    color:var(--signal);border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);
+    color:var(--signal);border:1px solid var(--signal-dim);background:rgba(31,155,224,0.08);
     padding:6px 12px;border-radius:20px;margin-bottom:22px;
   }
   .hero h1{
@@ -191,6 +201,31 @@
     .hero-grid{grid-template-columns:1fr;}
     .device-scan{max-width:320px;margin:0 auto;}
   }
+
+  /* ---------- quick services strip ---------- */
+  .quick-strip{
+    position:relative;margin-top:56px;
+    display:grid;grid-template-columns:repeat(6,1fr);
+    border-radius:14px;overflow:hidden;
+    box-shadow:0 10px 30px rgba(11,95,165,0.10);
+  }
+  .quick-item{
+    display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;
+    padding:22px 10px;background:#fff;color:var(--text);
+    border-right:1px solid var(--steel-soft);
+    transition:transform 0.2s ease, background 0.2s ease;
+  }
+  .quick-item:last-child{border-right:none;}
+  .quick-item.alt{background:var(--signal);color:#fff;}
+  .quick-item:hover{transform:translateY(-3px);}
+  .quick-icon{
+    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    background:rgba(31,155,224,0.10);color:var(--signal);
+  }
+  .quick-item.alt .quick-icon{background:rgba(255,255,255,0.18);color:#fff;}
+  .quick-item span{font-size:12.5px;font-weight:700;letter-spacing:0.01em;line-height:1.3;}
+  @media (max-width:860px){.quick-strip{grid-template-columns:repeat(3,1fr);}.quick-item{border-bottom:1px solid var(--steel-soft);}}
+  @media (max-width:480px){.quick-strip{grid-template-columns:repeat(2,1fr);}}
 
   /* ---------- section shared ---------- */
   section{padding:88px 0;}
@@ -300,7 +335,7 @@
   }
   .loc-card .loc-tag{
     display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--signal);
-    border:1px solid var(--signal-dim);background:rgba(76,141,255,0.08);padding:4px 10px;border-radius:14px;margin-bottom:16px;
+    border:1px solid var(--signal-dim);background:rgba(31,155,224,0.08);padding:4px 10px;border-radius:14px;margin-bottom:16px;
   }
   .loc-card h3{font-size:19px;margin-bottom:10px;}
   .loc-card address{font-style:normal;color:var(--text-mute);font-size:14.5px;line-height:1.7;margin-bottom:18px;}
@@ -352,7 +387,7 @@
   }
   .status-track .st-node.done .st-dot{background:var(--signal);border-color:var(--signal);}
   .status-track .st-node.done .st-dot svg{width:12px;height:12px;color:#fff;}
-  .status-track .st-node.current .st-dot{border-color:var(--signal);box-shadow:0 0 0 4px rgba(76,141,255,0.15);}
+  .status-track .st-node.current .st-dot{border-color:var(--signal);box-shadow:0 0 0 4px rgba(31,155,224,0.15);}
   .status-track .st-label{font-size:11.5px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
   .status-track .st-node.done .st-label, .status-track .st-node.current .st-label{color:var(--text);}
   @media (max-width:520px){.tr-meta{grid-template-columns:1fr;}.status-track .st-label{font-size:10px;}}
@@ -519,7 +554,7 @@
   .screen-glow{
     margin-top:14%;width:78%;height:70%;border-radius:16px;
     background:linear-gradient(165deg,#1B2942,#0E1420 60%);
-    border:1px solid rgba(76,141,255,0.25);
+    border:1px solid rgba(31,155,224,0.25);
     position:relative;overflow:hidden;
     box-shadow:inset 0 0 24px rgba(0,0,0,0.5);
   }
@@ -534,7 +569,7 @@
   .cam-cluster{position:absolute;top:7%;left:7%;width:38%;height:26%;display:flex;flex-wrap:wrap;gap:5%;align-content:flex-start;background:radial-gradient(circle at 35% 30%, rgba(0,0,0,0.35), transparent 70%);border-radius:22%;padding:4%;}
   .cam-cluster .lens{
     width:42%;aspect-ratio:1;border-radius:50%;position:relative;
-    background:radial-gradient(circle at 32% 28%, #E8C468 0%, #2A2413 45%, #0A0906 100%);
+    background:radial-gradient(circle at 32% 28%, #6FC3F0 0%, #142A3A 45%, #060A10 100%);
     border:2px solid rgba(0,0,0,0.6);
     box-shadow:0 0 0 1px rgba(255,255,255,0.10), inset 0 0 6px rgba(0,0,0,0.6);
   }
@@ -602,29 +637,35 @@
   .model-specs .spec-row .k{color:var(--text-faint);}
   .model-specs .spec-row .v{color:var(--text-mute);text-align:right;max-width:60%;}
   .model-card .repair-note{
-    font-size:12px;color:var(--signal);background:rgba(76,141,255,0.08);border:1px solid var(--signal-dim);
+    font-size:12px;color:var(--signal);background:rgba(31,155,224,0.08);border:1px solid var(--signal-dim);
     padding:8px 10px;border-radius:8px;text-align:center;width:100%;
   }
 
   @media (max-width:980px){.models-grid{grid-template-columns:repeat(2,1fr);}}
   @media (max-width:520px){.models-grid{grid-template-columns:1fr;}}
 
-  /* ---------- floating whatsapp ---------- */
-  .float-wa{
-    position:fixed;bottom:24px;right:24px;z-index:60;
-    display:flex;align-items:center;gap:10px;
-    background:#25D366;color:#0F1218;
-    padding:14px 18px;border-radius:30px;font-weight:600;font-size:14px;
-    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  /* ---------- floating icon stack (left edge) ---------- */
+  .float-stack{
+    position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:60;
+    display:flex;flex-direction:column;
   }
-  .float-wa::before{
-    content:"";position:absolute;inset:-4px;border-radius:34px;border:2px solid #25D366;opacity:0.5;
-    animation:pulse-ring 2s ease-out infinite;
+  .float-btn{
+    position:relative;
+    width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+    color:#fff;box-shadow:2px 0 14px rgba(11,95,165,0.18);
   }
-  @keyframes pulse-ring{0%{transform:scale(1);opacity:0.5;}100%{transform:scale(1.25);opacity:0;}}
-  .float-wa svg{width:20px;height:20px;flex-shrink:0;}
-  .float-wa .wa-label{display:none;}
-  @media (min-width:640px){.float-wa .wa-label{display:inline;}}
+  .float-btn svg{width:22px;height:22px;flex-shrink:0;}
+  .float-wa{background:#25D366;}
+  .float-call{background:var(--signal);}
+  .float-book{background:var(--copper);}
+  .float-tip{
+    display:none;position:absolute;left:100%;top:50%;transform:translateY(-50%);margin-left:10px;
+    background:var(--text);color:#fff;font-size:12.5px;font-weight:600;white-space:nowrap;
+    padding:6px 12px;border-radius:6px;
+  }
+  @media (min-width:768px){
+    .float-btn:hover .float-tip{display:block;}
+  }
 </style>
 </head>
 <body>
@@ -660,6 +701,37 @@
 
   <!-- HERO -->
   <section class="hero">
+    <svg class="hero-skyline" viewBox="0 0 1400 200" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="#0B5FA5">
+        <rect x="0" y="120" width="60" height="80"/>
+        <rect x="70" y="80" width="45" height="120"/>
+        <rect x="125" y="140" width="70" height="60"/>
+        <rect x="205" y="60" width="38" height="140"/>
+        <rect x="252" y="100" width="55" height="100"/>
+        <rect x="315" y="30" width="26" height="170"/>
+        <polygon points="328,30 341,30 334.5,5"/>
+        <rect x="350" y="110" width="60" height="90"/>
+        <rect x="420" y="70" width="42" height="130"/>
+        <rect x="470" y="130" width="80" height="70"/>
+        <rect x="560" y="90" width="36" height="110"/>
+        <rect x="605" y="45" width="30" height="155"/>
+        <rect x="645" y="115" width="65" height="85"/>
+        <rect x="720" y="75" width="44" height="125"/>
+        <rect x="775" y="20" width="24" height="180"/>
+        <polygon points="787,20 799,20 793,0"/>
+        <rect x="810" y="105" width="58" height="95"/>
+        <rect x="878" y="65" width="40" height="135"/>
+        <rect x="928" y="135" width="72" height="65"/>
+        <rect x="1010" y="85" width="36" height="115"/>
+        <rect x="1055" y="50" width="28" height="150"/>
+        <rect x="1093" y="120" width="62" height="80"/>
+        <rect x="1165" y="75" width="45" height="125"/>
+        <rect x="1220" y="40" width="30" height="160"/>
+        <polygon points="1232,40 1244,40 1238,15"/>
+        <rect x="1260" y="110" width="60" height="90"/>
+        <rect x="1330" y="70" width="70" height="130"/>
+      </g>
+    </svg>
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow"><span class="mono">●</span> DUBAI · SAME-DAY DIAGNOSTICS</div>
@@ -680,6 +752,32 @@
         <div class="phone-outline"><div class="scan-line"></div></div>
         <div class="scan-status"><span class="blink"></span>ANALYZING HARDWARE…</div>
       </div>
+    </div>
+    <div class="quick-strip">
+      <a href="#services" class="quick-item">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+        <span>Screen &amp; Battery Repair</span>
+      </a>
+      <a href="#models" class="quick-item alt">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <span>Genuine Parts</span>
+      </a>
+      <a href="#book" class="quick-item">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg></div>
+        <span>Book a Repair</span>
+      </a>
+      <a href="#buy-sell" class="quick-item alt">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg></div>
+        <span>Buy &amp; Sell Phones</span>
+      </a>
+      <a href="#track" class="quick-item">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z"/><path d="M12 7v5l3 3"/></svg></div>
+        <span>Track Repair</span>
+      </a>
+      <a href="#locations" class="quick-item alt">
+        <div class="quick-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.5-7-11a7 7 0 0114 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+        <span>Visit Our Store</span>
+      </a>
     </div>
   </section>
 
@@ -1107,10 +1205,20 @@
   </div>
 </footer>
 
-<a href="https://wa.me/971569556165" class="float-wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.77 1.24-.47.06-1.06.09-1.71-.11a15.8 15.8 0 01-1.55-.57c-2.73-1.18-4.51-3.94-4.65-4.13-.14-.19-1.11-1.47-1.11-2.81 0-1.34.7-2 .95-2.27.25-.28.55-.34.73-.34h.53c.17 0 .4-.03.62.48.22.51.75 1.77.82 1.9.07.13.11.28.02.46-.09.18-.14.28-.28.44-.14.15-.29.34-.42.46-.14.13-.29.28-.13.55.17.28.75 1.25 1.62 2.02 1.11.99 2.05 1.3 2.32 1.44.28.14.44.12.6-.06.17-.19.7-.82.89-1.1.19-.28.37-.23.62-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.15 1.31z"/></svg>
-  <span class="wa-label">WhatsApp us</span>
-</a>
+<div class="float-stack">
+  <a href="https://wa.me/971569556165" class="float-btn float-wa" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l5.06-1.33A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm5.2 14.2c-.22.62-1.28 1.18-1.77 1.24-.47.06-1.06.09-1.71-.11a15.8 15.8 0 01-1.55-.57c-2.73-1.18-4.51-3.94-4.65-4.13-.14-.19-1.11-1.47-1.11-2.81 0-1.34.7-2 .95-2.27.25-.28.55-.34.73-.34h.53c.17 0 .4-.03.62.48.22.51.75 1.77.82 1.9.07.13.11.28.02.46-.09.18-.14.28-.28.44-.14.15-.29.34-.42.46-.14.13-.29.28-.13.55.17.28.75 1.25 1.62 2.02 1.11.99 2.05 1.3 2.32 1.44.28.14.44.12.6-.06.17-.19.7-.82.89-1.1.19-.28.37-.23.62-.14.25.09 1.6.76 1.87.9.28.14.46.21.53.33.07.12.07.68-.15 1.31z"/></svg>
+    <span class="float-tip">WhatsApp us</span>
+  </a>
+  <a href="tel:+971569556165" class="float-btn float-call" aria-label="Call us">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+    <span class="float-tip">Call now</span>
+  </a>
+  <a href="#book" class="float-btn float-book" aria-label="Book a repair">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+    <span class="float-tip">Book a repair</span>
+  </a>
+</div>
 
 <script>
   /* ---------- shared order storage (localStorage, read by admin.html) ---------- */
