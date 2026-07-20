@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
     --ink:#E9F5FD; --panel:#FFFFFF; --panel-2:#F1FAFF;
@@ -241,9 +242,8 @@
           <p style="color:var(--text-mute);font-size:13.5px;max-width:620px;">
             Upload a photo for the tap-to-spin card, a real <code>.glb</code>/<code>.gltf</code> 3D model for a true
             drag-to-rotate view, or a short video. Priority when a card renders: <strong>3D model → video → photo →
-            illustration</strong>. Photos are auto-resized. Files are stored in this browser's IndexedDB — much more
-            room than before (3D up to 40MB, video up to 60MB), but still local to this device until a real backend
-            is connected.
+            illustration</strong>. Photos are auto-resized. Files are stored in the cloud — visible to every visitor
+            on every device, not just this browser (3D up to 40MB, video up to 60MB).
           </p>
           <div id="storageMeter" style="margin-top:14px;"></div>
         </div>
@@ -276,14 +276,9 @@
   }
 
   const ADMIN_PASSWORD = "egyware2026"; // change this to your own password
-  const ORDERS_KEY = 'egyware_orders';
-
-  function getOrders(){
-    try{ return JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; }catch(e){ return []; }
-  }
-  function saveOrders(list){
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
-  }
+  const SUPABASE_URL = 'https://tpvihudnkilicquesykr.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwdmlodWRua2lsaWNxdWVzeWtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NzIyMDQsImV4cCI6MjEwMDA0ODIwNH0.0e-ZSMHqUgoxY7SyO7tBrRtMXQM1gbT0JHpqUVgFBSo';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   function tryLogin(){
     const val = document.getElementById('pwInput').value;
@@ -320,8 +315,9 @@
            d.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
   }
 
-  function renderOrders(){
-    const list = getOrders();
+  async function renderOrders(){
+    const { data, error } = await sb.from('orders').select('*').order('created_at', {ascending:false});
+    const list = data || [];
     const search = document.getElementById('searchInput').value.toLowerCase();
     const statusF = document.getElementById('statusFilter').value;
 
@@ -338,6 +334,10 @@
     });
 
     const container = document.getElementById('ordersList');
+    if(error){
+      container.innerHTML = `<div class="orders-empty">Could not load requests — check your connection and reload.</div>`;
+      return;
+    }
     if(filtered.length === 0){
       container.innerHTML = `<div class="orders-empty">No requests yet. New submissions from the website's "Book a Repair" form will appear here automatically.</div>`;
       return;
@@ -345,7 +345,7 @@
 
     container.innerHTML = filtered.map(o=>`
       <div class="order-card">
-        <div class="tick">${o.id}<span class="date">${fmtDate(o.date)}</span></div>
+        <div class="tick">${o.id}<span class="date">${fmtDate(o.created_at)}</span></div>
         <div class="order-info">
           <div class="row"><span class="k">Name</span><span class="v">${escapeHtml(o.name)}</span></div>
           <div class="row"><span class="k">Phone</span><span class="v">${escapeHtml(o.phone)}</span></div>
@@ -379,25 +379,21 @@
     return str.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
-  function updateStatus(id, newStatus, el){
-    const list = getOrders();
-    const order = list.find(o=>o.id === id);
-    if(order){ order.status = newStatus; saveOrders(list); }
+  async function updateStatus(id, newStatus, el){
+    await sb.from('orders').update({ status: newStatus }).eq('id', id);
     el.className = 'status-select ' + statusClass(newStatus);
     renderOrders();
   }
 
-  function deleteOrder(id){
+  async function deleteOrder(id){
     if(!confirm('Delete this request permanently?')) return;
-    let list = getOrders();
-    list = list.filter(o=>o.id !== id);
-    saveOrders(list);
+    await sb.from('orders').delete().eq('id', id);
     renderOrders();
   }
 
-  function exportOrders(){
-    const list = getOrders();
-    const blob = new Blob([JSON.stringify(list, null, 2)], {type:'application/json'});
+  async function exportOrders(){
+    const { data } = await sb.from('orders').select('*');
+    const blob = new Blob([JSON.stringify(data || [], null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -410,16 +406,18 @@
     const file = event.target.files[0];
     if(!file) return;
     const reader = new FileReader();
-    reader.onload = function(e){
+    reader.onload = async function(e){
       try{
         const imported = JSON.parse(e.target.result);
         if(!Array.isArray(imported)) throw new Error('Invalid file');
-        const existing = getOrders();
-        const existingIds = new Set(existing.map(o=>o.id));
-        const merged = existing.concat(imported.filter(o=>!existingIds.has(o.id)));
-        saveOrders(merged);
+        const rows = imported.map(o => ({
+          id: o.id, name: o.name, phone: o.phone, device: o.device,
+          service: o.service, method: o.method, notes: o.notes, status: o.status || 'New'
+        }));
+        const { error } = await sb.from('orders').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+        if(error) throw error;
         renderOrders();
-        alert(`Imported ${imported.length} request(s).`);
+        alert(`Imported ${rows.length} request(s).`);
       }catch(err){
         alert('Could not read that file — make sure it\'s an Egyware orders backup JSON.');
       }
@@ -428,7 +426,7 @@
     reader.readAsText(file);
   }
 
-  /* ---------- model photos / 3D / video: IndexedDB (large quota, raw Blob storage) ---------- */
+  /* ---------- model photos / 3D / video: Supabase Storage (shared across every device) ---------- */
   const MODEL_NAMES = [
     "iPhone X","iPhone XR","iPhone XS","iPhone XS Max",
     "iPhone 11","iPhone 11 Pro","iPhone 11 Pro Max",
@@ -440,58 +438,32 @@
     "iPhone 17","iPhone 17 Air","iPhone 17 Pro","iPhone 17 Pro Max"
   ];
 
-  const IDB_NAME = 'egyware_media';
-  const IDB_STORE = 'assets';
-  function idbOpen(){
-    return new Promise((resolve, reject)=>{
-      const req = indexedDB.open(IDB_NAME, 1);
-      req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE, {keyPath:'id'}); };
-      req.onsuccess = ()=> resolve(req.result);
-      req.onerror = ()=> reject(req.error);
-    });
-  }
-  async function idbSet(id, blob, mime, name){
-    const db = await idbOpen();
-    return new Promise((resolve, reject)=>{
-      const tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).put({id, blob, mime, name, savedAt: Date.now()});
-      tx.oncomplete = ()=> resolve(true);
-      tx.onerror = ()=> reject(tx.error);
-    });
-  }
-  async function idbGet(id){
-    const db = await idbOpen();
-    return new Promise((resolve, reject)=>{
-      const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).get(id);
-      req.onsuccess = ()=> resolve(req.result || null);
-      req.onerror = ()=> reject(req.error);
-    });
-  }
-  async function idbDelete(id){
-    const db = await idbOpen();
-    return new Promise((resolve, reject)=>{
-      const tx = db.transaction(IDB_STORE, 'readwrite');
-      tx.objectStore(IDB_STORE).delete(id);
-      tx.oncomplete = ()=> resolve(true);
-      tx.onerror = ()=> reject(tx.error);
-    });
-  }
-  async function idbGetAll(){
-    const db = await idbOpen();
-    return new Promise((resolve, reject)=>{
-      const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).getAll();
-      req.onsuccess = ()=> resolve(req.result || []);
-      req.onerror = ()=> reject(req.error);
-    });
+  function slugify(name){
+    return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   }
 
-  // IndexedDB quota is typically hundreds of MB+, so limits are far more generous than localStorage days.
   const MAX_3D_BYTES = 40 * 1024 * 1024;    // 40MB per 3D model
   const MAX_VIDEO_BYTES = 60 * 1024 * 1024; // 60MB per video
   const SUPPORTED_3D_EXT = ['.glb', '.gltf'];
   const UNSUPPORTED_3D_EXT = ['.obj', '.fbx', '.usdz', '.stl', '.dae', '.blend', '.3ds', '.max', '.c4d'];
+
+  async function uploadAsset(modelName, assetType, file, ext){
+    const path = `${assetType}/${slugify(modelName)}.${ext}`;
+    const { error: upErr } = await sb.storage.from('media').upload(path, file, { upsert: true, contentType: file.type });
+    if(upErr) throw upErr;
+    const { error: dbErr } = await sb.from('media_assets').upsert({
+      model_name: modelName, asset_type: assetType, storage_path: path, updated_at: new Date().toISOString()
+    }, { onConflict: 'model_name,asset_type' });
+    if(dbErr) throw dbErr;
+  }
+
+  async function removeAsset(modelName, assetType){
+    const { data: row } = await sb.from('media_assets').select('storage_path').eq('model_name', modelName).eq('asset_type', assetType).maybeSingle();
+    if(row){
+      await sb.storage.from('media').remove([row.storage_path]);
+      await sb.from('media_assets').delete().eq('model_name', modelName).eq('asset_type', assetType);
+    }
+  }
 
   async function handle3DUpload(event, modelName){
     const file = event.target.files[0];
@@ -514,10 +486,11 @@
       return;
     }
     try{
-      await idbSet('3d:' + modelName, file, file.type, file.name);
+      const ext = lower.endsWith('.gltf') ? 'gltf' : 'glb';
+      await uploadAsset(modelName, '3d', file, ext);
       renderPhotoGrid();
     }catch(err){
-      alert('Could not save this file: ' + (err?.message || 'storage error') + '. You may be out of disk space — free some up and try again.');
+      alert('Could not save this file: ' + (err?.message || 'upload error') + '. Check your connection and try again.');
     }
     event.target.value = '';
   }
@@ -536,21 +509,22 @@
       return;
     }
     try{
-      await idbSet('video:' + modelName, file, file.type, file.name);
+      const ext = (file.name.split('.').pop() || 'mp4').toLowerCase();
+      await uploadAsset(modelName, 'video', file, ext);
       renderPhotoGrid();
     }catch(err){
-      alert('Could not save this video: ' + (err?.message || 'storage error') + '. You may be out of disk space — free some up and try again.');
+      alert('Could not save this video: ' + (err?.message || 'upload error') + '. Check your connection and try again.');
     }
     event.target.value = '';
   }
 
   async function removeVideo(modelName){
-    await idbDelete('video:' + modelName);
+    await removeAsset(modelName, 'video');
     renderPhotoGrid();
   }
 
   async function remove3D(modelName){
-    await idbDelete('3d:' + modelName);
+    await removeAsset(modelName, '3d');
     renderPhotoGrid();
   }
 
@@ -577,34 +551,36 @@
     if(!file) return;
     resizeImage(file, 900, async function(blob){
       try{
-        await idbSet('photo:' + modelName, blob, 'image/jpeg', file.name);
+        blob.name = file.name;
+        await uploadAsset(modelName, 'photo', blob, 'jpg');
         renderPhotoGrid();
       }catch(err){
-        alert('Could not save this photo: ' + (err?.message || 'storage error'));
+        alert('Could not save this photo: ' + (err?.message || 'upload error'));
       }
     });
     event.target.value = '';
   }
 
   async function removePhoto(modelName){
-    await idbDelete('photo:' + modelName);
+    await removeAsset(modelName, 'photo');
     renderPhotoGrid();
   }
 
   async function updateStorageMeter(){
     const el = document.getElementById('storageMeter');
     if(!el) return;
-    if(navigator.storage && navigator.storage.estimate){
-      try{
-        const {usage, quota} = await navigator.storage.estimate();
-        const usedMB = (usage/1024/1024).toFixed(1);
-        const quotaMB = (quota/1024/1024).toFixed(0);
-        const pct = quota ? Math.min(100, (usage/quota)*100) : 0;
-        el.innerHTML = `<div class="storage-bar"><div class="storage-fill" style="width:${pct}%"></div></div>
-          <div class="storage-label">${usedMB}MB used of ~${quotaMB}MB available on this device/browser</div>`;
-      }catch(e){
-        el.innerHTML = '';
+    try{
+      let totalBytes = 0, totalFiles = 0;
+      for(const folder of ['photo','3d','video']){
+        const { data } = await sb.storage.from('media').list(folder, { limit: 1000 });
+        (data || []).forEach(f=>{
+          if(f.metadata?.size){ totalBytes += f.metadata.size; totalFiles++; }
+        });
       }
+      const usedMB = (totalBytes/1024/1024).toFixed(1);
+      el.innerHTML = `<div class="storage-label">${usedMB}MB stored in the cloud across ${totalFiles} file(s) — visible on every device, not just this one.</div>`;
+    }catch(e){
+      el.innerHTML = '';
     }
   }
 
@@ -612,16 +588,19 @@
     const grid = document.getElementById('photoGrid');
     if(!grid) return;
     const search = (document.getElementById('photoSearch')?.value || '').toLowerCase();
-    const allRecords = await idbGetAll();
+    const { data: allRows } = await sb.from('media_assets').select('*');
     const byId = {};
-    allRecords.forEach(r=> byId[r.id] = r);
+    (allRows || []).forEach(r=>{
+      const { data: urlData } = sb.storage.from('media').getPublicUrl(r.storage_path);
+      byId[r.asset_type + ':' + r.model_name] = { ...r, url: urlData.publicUrl };
+    });
     const names = MODEL_NAMES.filter(n => n.toLowerCase().includes(search));
 
     grid.innerHTML = names.map((name, i)=>{
       const photoRec = byId['photo:' + name];
       const model3dRec = byId['3d:' + name];
       const videoRec = byId['video:' + name];
-      const photoUrl = photoRec ? URL.createObjectURL(photoRec.blob) : null;
+      const photoUrl = photoRec ? photoRec.url : null;
       const inputId = 'phInput' + i;
       const inputId3d = 'd3Input' + i;
       const inputIdVid = 'vidInput' + i;
@@ -654,25 +633,9 @@
     updateStorageMeter();
   }
 
-  function blobToBase64(blob){
-    return new Promise((resolve, reject)=>{
-      const reader = new FileReader();
-      reader.onload = ()=> resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
-  function base64ToBlob(dataUrl){
-    return fetch(dataUrl).then(r => r.blob());
-  }
-
   async function exportPhotos(){
-    const all = await idbGetAll();
-    const out = {};
-    for(const rec of all){
-      out[rec.id] = { data: await blobToBase64(rec.blob), mime: rec.mime, name: rec.name };
-    }
-    const blob = new Blob([JSON.stringify(out)], {type:'application/json'});
+    const { data } = await sb.from('media_assets').select('*');
+    const blob = new Blob([JSON.stringify(data || [], null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -681,28 +644,11 @@
     URL.revokeObjectURL(url);
   }
 
-  async function importPhotos(event){
+  function importPhotos(event){
     const file = event.target.files[0];
     if(!file) return;
-    const reader = new FileReader();
-    reader.onload = async function(e){
-      try{
-        const imported = JSON.parse(e.target.result);
-        let count = 0;
-        for(const id of Object.keys(imported)){
-          const entry = imported[id];
-          const blob = await base64ToBlob(entry.data);
-          await idbSet(id, blob, entry.mime, entry.name);
-          count++;
-        }
-        renderPhotoGrid();
-        alert(`Imported ${count} item(s).`);
-      }catch(err){
-        alert('Could not read that file — make sure it\'s an Egyware media backup JSON.');
-      }
-      event.target.value = '';
-    };
-    reader.readAsText(file);
+    alert('Media files now live in shared cloud storage, so a local backup file can\'t be re-imported directly — re-upload the photo/3D/video for each model instead. This export is kept as a readable record of what was uploaded and when.');
+    event.target.value = '';
   }
 </script>
 </body>

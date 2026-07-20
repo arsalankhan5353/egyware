@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root{
     --ink:#E9F5FD;
@@ -1221,33 +1222,34 @@
 </div>
 
 <script>
-  /* ---------- shared order storage (localStorage, read by admin.html) ---------- */
-  const ORDERS_KEY = 'egyware_orders';
-  function getOrders(){
-    try{ return JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; }catch(e){ return []; }
-  }
-  function saveOrders(list){
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
-  }
-  function nextTicketId(list){
-    const n = 100 + list.length;
-    return 'ET-' + n;
+  /* ---------- Supabase client (shared backend for orders + media) ---------- */
+  const SUPABASE_URL = 'https://tpvihudnkilicquesykr.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwdmlodWRua2lsaWNxdWVzeWtyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NzIyMDQsImV4cCI6MjEwMDA0ODIwNH0.0e-ZSMHqUgoxY7SyO7tBrRtMXQM1gbT0JHpqUVgFBSo';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  async function nextTicketId(){
+    const { count } = await sb.from('orders').select('*', { count: 'exact', head: true });
+    return 'ET-' + (100 + (count || 0));
   }
 
   const STATUS_STEPS = ['New','In Progress','Ready','Completed'];
-  function trackOrder(){
-    const q = document.getElementById('trackInput').value.trim().toLowerCase();
+  async function trackOrder(){
+    const q = document.getElementById('trackInput').value.trim();
     const resultEl = document.getElementById('trackResult');
     const emptyEl = document.getElementById('trackEmpty');
     resultEl.style.display = 'none';
     emptyEl.style.display = 'none';
     if(!q) return;
 
-    const list = getOrders();
-    const order = list.find(o =>
-      o.id.toLowerCase() === q ||
-      (o.phone || '').replace(/[^0-9]/g,'').includes(q.replace(/[^0-9]/g,'')) && q.replace(/[^0-9]/g,'').length >= 6
-    );
+    const digits = q.replace(/[^0-9]/g,'');
+    let order = null;
+    const byId = await sb.from('orders').select('*').ilike('id', q).maybeSingle();
+    if(byId.data){
+      order = byId.data;
+    } else if(digits.length >= 6){
+      const byPhone = await sb.from('orders').select('*').ilike('phone', `%${digits}%`).order('created_at', {ascending:false}).limit(1).maybeSingle();
+      order = byPhone.data;
+    }
 
     if(!order){ emptyEl.style.display = 'block'; return; }
 
@@ -1263,7 +1265,7 @@
     resultEl.innerHTML = `
       <div class="tr-head">
         <span class="tid">${order.id}</span>
-        <span class="tdate">Submitted ${fmtTrackDate(order.date)}</span>
+        <span class="tdate">Submitted ${fmtTrackDate(order.created_at)}</span>
       </div>
       <div class="tr-meta">
         <div><span class="k">Device: </span>${escapeHtmlTrack(order.device)}</div>
@@ -1285,8 +1287,12 @@
 
   const orderForm = document.getElementById('orderForm');
   if(orderForm){
-    orderForm.addEventListener('submit', function(e){
+    orderForm.addEventListener('submit', async function(e){
       e.preventDefault();
+      const submitBtn = orderForm.querySelector('button[type=submit]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting…';
+
       const name = document.getElementById('ofName').value.trim();
       const phone = document.getElementById('ofPhone').value.trim();
       const device = document.getElementById('ofDevice').value.trim();
@@ -1294,15 +1300,17 @@
       const method = document.getElementById('ofMethod').value;
       const notes = document.getElementById('ofNotes').value.trim();
 
-      const list = getOrders();
-      const ticket = nextTicketId(list);
-      list.unshift({
-        id: ticket,
-        name, phone, device, service, method, notes,
-        status: 'New',
-        date: new Date().toISOString()
+      const ticket = await nextTicketId();
+      const { error } = await sb.from('orders').insert({
+        id: ticket, name, phone, device, service, method, notes, status: 'New'
       });
-      saveOrders(list);
+
+      if(error){
+        alert('Could not submit your request — please try again or message us directly on WhatsApp.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit request';
+        return;
+      }
 
       const msg = `Hi Egyware Trading! New request ${ticket}%0A` +
         `Name: ${encodeURIComponent(name)}%0A` +
@@ -1327,11 +1335,24 @@
     scene._spinTimer = setTimeout(()=>{ scene.classList.remove('spinning'); }, 1500);
   }
 
+  /* ---------- media (Supabase Storage + media_assets table) ---------- */
+  let MEDIA_MAP = {};
+  async function loadMediaMap(){
+    const { data } = await sb.from('media_assets').select('*');
+    const map = {};
+    (data || []).forEach(r=>{
+      if(!map[r.model_name]) map[r.model_name] = {};
+      const { data: urlData } = sb.storage.from('media').getPublicUrl(r.storage_path);
+      map[r.model_name][r.asset_type] = urlData.publicUrl;
+    });
+    MEDIA_MAP = map;
+    return map;
+  }
+
   async function openLightbox(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const rec = await idbGet('photo:' + modelName);
-    if(!model || !rec) return;
-    const url = URL.createObjectURL(rec.blob);
+    const url = MEDIA_MAP[modelName]?.photo;
+    if(!model || !url) return;
 
     const scene = document.getElementById('lightboxScene');
     scene.innerHTML = `
@@ -1348,9 +1369,8 @@
 
   async function openLightbox3D(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const rec = await idbGet('3d:' + modelName);
-    if(!model || !rec) return;
-    const url = URL.createObjectURL(rec.blob);
+    const url = MEDIA_MAP[modelName]?.['3d'];
+    if(!model || !url) return;
 
     const scene = document.getElementById('lightboxScene');
     scene.innerHTML = `<model-viewer class="real-3d lightbox-3d" src="${url}" camera-controls auto-rotate
@@ -1364,9 +1384,8 @@
 
   async function openLightboxVideo(modelName){
     const model = IPHONE_MODELS.find(m => m.name === modelName);
-    const rec = await idbGet('video:' + modelName);
-    if(!model || !rec) return;
-    const url = URL.createObjectURL(rec.blob);
+    const url = MEDIA_MAP[modelName]?.video;
+    if(!model || !url) return;
 
     const scene = document.getElementById('lightboxScene');
     scene.innerHTML = `<video class="real-video lightbox-video" src="${url}" controls autoplay loop playsinline></video>`;
@@ -1429,27 +1448,6 @@
     { group:"17 Series", name:"iPhone 17 Pro Max", colors:"Cosmic Orange · Silver · Deep Blue", display:"6.9″ Dynamic Island ProMotion", chip:"A19 Pro", camera:"Triple 48MP, 8x zoom", storage:"From 256GB", cams:3, top:"island", body:"#4A3A2E,#2A2019" },
   ];
 
-  /* ---------- media storage: IndexedDB (large quota, stores raw Blobs) ---------- */
-  const IDB_NAME = 'egyware_media';
-  const IDB_STORE = 'assets';
-  function idbOpen(){
-    return new Promise((resolve, reject)=>{
-      const req = indexedDB.open(IDB_NAME, 1);
-      req.onupgradeneeded = ()=>{ req.result.createObjectStore(IDB_STORE, {keyPath:'id'}); };
-      req.onsuccess = ()=> resolve(req.result);
-      req.onerror = ()=> reject(req.error);
-    });
-  }
-  async function idbGet(id){
-    const db = await idbOpen();
-    return new Promise((resolve, reject)=>{
-      const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).get(id);
-      req.onsuccess = ()=> resolve(req.result || null);
-      req.onerror = ()=> reject(req.error);
-    });
-  }
-
   async function renderModelCard(m, sizeKey){
     const sizes = { sm:{w:104,h:212,d:12}, md:{w:110,h:224,d:13}, lg:{w:120,h:246,d:14} };
     const s = sizes[sizeKey] || sizes.md;
@@ -1458,12 +1456,10 @@
     let lenses = "";
     for(let i=0;i<lensCount;i++){ lenses += '<div class="lens"></div>'; }
 
-    const model3dRec = await idbGet('3d:' + m.name);
-    const videoRec = await idbGet('video:' + m.name);
-    const photoRec = await idbGet('photo:' + m.name);
-    const model3d = model3dRec ? URL.createObjectURL(model3dRec.blob) : null;
-    const video = videoRec ? URL.createObjectURL(videoRec.blob) : null;
-    const photo = photoRec ? URL.createObjectURL(photoRec.blob) : null;
+    const assets = MEDIA_MAP[m.name] || {};
+    const model3d = assets['3d'] || null;
+    const video = assets.video || null;
+    const photo = assets.photo || null;
 
     if(model3d){
       return `
@@ -1546,6 +1542,7 @@
   async function initModelsGrid(){
     const grid = document.getElementById('modelsGrid');
     if(!grid) return;
+    await loadMediaMap();
     let lastGroup = null;
     const parts = [];
     for(const m of IPHONE_MODELS){
