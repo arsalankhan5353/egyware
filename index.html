@@ -7,9 +7,11 @@
 <meta name="description" content="Egyware Trading LLC — professional iPhone, Samsung, iPad & MacBook repair in Dubai. Same-day fixes, genuine parts, pick-up & delivery. Deira, Dubai.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<link rel="preconnect" href="https://tpvihudnkilicquesykr.supabase.co">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 <style>
   :root{
     --ink:#E9F5FD;
@@ -1340,13 +1342,31 @@
   async function loadMediaMap(){
     const { data } = await sb.from('media_assets').select('*');
     const map = {};
+    let has3D = false;
     (data || []).forEach(r=>{
       if(!map[r.model_name]) map[r.model_name] = {};
       const { data: urlData } = sb.storage.from('media').getPublicUrl(r.storage_path);
-      map[r.model_name][r.asset_type] = urlData.publicUrl;
+      const cacheBust = r.updated_at ? `?v=${new Date(r.updated_at).getTime()}` : '';
+      map[r.model_name][r.asset_type] = urlData.publicUrl + cacheBust;
+      if(r.asset_type === '3d') has3D = true;
     });
     MEDIA_MAP = map;
+    if(has3D) await ensureModelViewerLoaded();
     return map;
+  }
+
+  let _modelViewerPromise = null;
+  function ensureModelViewerLoaded(){
+    if(customElements.get('model-viewer')) return Promise.resolve();
+    if(_modelViewerPromise) return _modelViewerPromise;
+    _modelViewerPromise = new Promise((resolve)=>{
+      const s = document.createElement('script');
+      s.type = 'module';
+      s.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+    return _modelViewerPromise;
   }
 
   async function openLightbox(modelName){
@@ -1371,6 +1391,7 @@
     const model = IPHONE_MODELS.find(m => m.name === modelName);
     const url = MEDIA_MAP[modelName]?.['3d'];
     if(!model || !url) return;
+    await ensureModelViewerLoaded();
 
     const scene = document.getElementById('lightboxScene');
     scene.innerHTML = `<model-viewer class="real-3d lightbox-3d" src="${url}" camera-controls auto-rotate

@@ -592,7 +592,8 @@
     const byId = {};
     (allRows || []).forEach(r=>{
       const { data: urlData } = sb.storage.from('media').getPublicUrl(r.storage_path);
-      byId[r.asset_type + ':' + r.model_name] = { ...r, url: urlData.publicUrl };
+      const cacheBust = r.updated_at ? `?v=${new Date(r.updated_at).getTime()}` : '';
+      byId[r.asset_type + ':' + r.model_name] = { ...r, url: urlData.publicUrl + cacheBust };
     });
     const names = MODEL_NAMES.filter(n => n.toLowerCase().includes(search));
 
